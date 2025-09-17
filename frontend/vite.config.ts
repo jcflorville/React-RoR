@@ -1,11 +1,22 @@
-import { defineConfig } from "vite"
-import react from "@vitejs/plugin-react-swc"
 import tailwindcss from "@tailwindcss/vite"
-import flowbiteReact from "flowbite-react/plugin/vite";
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite"
+import { defineConfig } from "vite"
+// import tsConfigPaths from "vite-tsconfig-paths"
+import react from "@vitejs/plugin-react-swc"
+import flowbiteReact from "flowbite-react/plugin/vite"
 
 // https://vite.dev/config/
 export default defineConfig({
-	plugins: [react(), tailwindcss(), flowbiteReact()],
+	plugins: [
+		tailwindcss(),
+		TanStackRouterVite({
+			target: "react",
+			autoCodeSplitting: true,
+		}),
+		// tsConfigPaths(),
+		react(),
+		flowbiteReact(),
+	],
 	server: {
 		host: "0.0.0.0", // Allow external connections
 		port: 5173,
