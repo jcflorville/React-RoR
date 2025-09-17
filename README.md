@@ -1,103 +1,103 @@
 # React + Rails Full-Stack Application
 
-Este projeto é uma aplicação full-stack com React (frontend) e Ruby on Rails API (backend), totalmente dockerizada para desenvolvimento.
+This project is a full-stack application with React (frontend) and Ruby on Rails API (backend), fully dockerized for development.
 
-## � Pré-requisitos
+## 📋 Prerequisites
 
-- **Docker** e **Docker Compose**
-- **Node.js 22.16.0** (para desenvolvimento local)
-- **pnpm** (gerenciador de pacotes)
+- **Docker** and **Docker Compose**
+- **Node.js 22.16.0** (for local development)
+- **pnpm** (package manager)
 
-### Configuração do Node.js
+### Node.js Setup
 
-Este projeto usa Node.js 22.16.0. Para garantir consistência:
+This project uses Node.js 22.16.0. To ensure consistency:
 
-**Com nvm:**
+**With nvm:**
 
 ```bash
-# Use a versão especificada no .nvmrc
+# Use the version specified in .nvmrc
 nvm use
 
-# Ou instale a versão específica
+# Or install the specific version
 nvm install 22.16.0
 nvm use 22.16.0
 ```
 
-**Com asdf:**
+**With asdf:**
 
 ```bash
-# Use a versão especificada no .tool-versions
+# Use the version specified in .tool-versions
 asdf install
 ```
 
-**Com fnm:**
+**With fnm:**
 
 ```bash
-# Use a versão especificada no .nvmrc
+# Use the version specified in .nvmrc
 fnm use
 ```
 
-**Instalar pnpm:**
+**Install pnpm:**
 
 ```bash
 npm install -g pnpm
 ```
 
-## �🚀 Quick Start
+## 🚀 Quick Start
 
-### Levantar todo o stack (Recomendado)
+### Start the entire stack (Recommended)
 
 ```bash
-# No diretório raiz do projeto
+# In the project root directory
 pnpm run dev
 ```
 
-Isso irá iniciar:
+This will start:
 
-- **Frontend React**: `http://localhost:5173`
-- **Backend Rails API**: `http://localhost:3000`
+- **React Frontend**: `http://localhost:5173`
+- **Rails API Backend**: `http://localhost:3000`
 - **PostgreSQL Database**: `localhost:5432`
 
-### Comandos Úteis
+### Useful Commands
 
 ```bash
-# Iniciar em modo detached (background)
+# Start in detached mode (background)
 pnpm run dev:detached
 
-# Parar todos os serviços
+# Stop all services
 pnpm run down
 
-# Ver logs de todos os serviços
+# View logs from all services
 pnpm run logs
 
-# Ver logs específicos
+# View specific logs
 pnpm run logs:frontend
 pnpm run logs:backend
 pnpm run logs:db
 
-# Reiniciar serviços
+# Restart services
 pnpm run restart
 pnpm run restart:frontend
 pnpm run restart:backend
 
-# Limpar tudo (volumes, networks, etc.)
+# Clean everything (volumes, networks, etc.)
 pnpm run clean
 
-# Rebuild completo
+# Complete rebuild
 pnpm run rebuild
 ```
 
-### Comandos Individuais (se precisar)
+### Individual Commands (if needed)
 
 ```bash
-# Apenas frontend
+# Frontend only
 pnpm run frontend:dev
 
-# Apenas backend
+# Backend only
 pnpm run backend:dev
 ```
 
-## 🏗️ Arquitetura
+## 🏗️ Architecture
 
 ```
 React-RoR/
@@ -109,15 +109,15 @@ React-RoR/
 │   ├── Dockerfile.dev
 │   ├── docker-compose.dev.yml
 │   └── app/
-├── docker-compose.yml  # Orquestração completa
-└── package.json        # Scripts de gerenciamento
+├── docker-compose.yml  # Complete orchestration
+└── package.json        # Management scripts
 ```
 
-## 🔧 Configuração
+## 🔧 Configuration
 
-### Variáveis de Ambiente
+### Environment Variables
 
-As variáveis estão configuradas no `docker-compose.yml`:
+Variables are configured in `docker-compose.yml`:
 
 **Frontend:**
 
@@ -130,40 +130,40 @@ As variáveis estão configuradas no `docker-compose.yml`:
 
 ### Networking
 
-Todos os serviços rodam na mesma rede Docker (`fullstack-network`), permitindo comunicação entre eles usando os nomes dos serviços.
+All services run on the same Docker network (`fullstack-network`), allowing communication between them using service names.
 
 ## 🔍 Troubleshooting
 
-### Se o backend não conectar ao banco:
+### If backend can't connect to database:
 
 ```bash
-npm run logs:db
-npm run logs:backend
+pnpm run logs:db
+pnpm run logs:backend
 ```
 
-### Se o frontend não conseguir acessar a API:
+### If frontend can't access the API:
 
-- Verifique se `VITE_API_URL` está correto
-- Confirme se o backend está rodando na porta 3000
+- Check if `VITE_API_URL` is correct
+- Confirm backend is running on port 3000
 
-### Para rebuild completo:
+### For complete rebuild:
 
 ```bash
 pnpm run clean
 pnpm run rebuild
 ```
 
-## 🚀 Desenvolvimento
+## 🚀 Development
 
-1. **Hot Reload**: Ambos frontend e backend têm hot reload ativo
-2. **Volume Mounting**: Suas alterações de código são refletidas instantaneamente
-3. **Logs em Tempo Real**: Use `pnpm run logs` para monitorar
+1. **Hot Reload**: Both frontend and backend have active hot reload
+2. **Volume Mounting**: Your code changes are reflected instantly
+3. **Real-time Logs**: Use `pnpm run logs` to monitor
 
-## 📝 Próximos Passos
+## 📝 Next Steps
 
-- [ ] Configurar CORS no Rails para permitir requests do frontend
-- [ ] Adicionar seeds para o banco de dados
-- [ ] Configurar testes automatizados
-- [ ] Setup de produção com Docker
+- [ ] Configure CORS in Rails to allow frontend requests
+- [ ] Add database seeds
+- [ ] Configure automated tests
+- [ ] Production setup with Docker
 
-Agora você pode desenvolver tanto frontend quanto backend simultaneamente! 🎉
+Now you can develop both frontend and backend simultaneously! 🎉
