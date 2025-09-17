@@ -27,3 +27,6 @@ dist-ssr
 .pnpm-store/
 .pnpm-debug.log*
 
+#flowbite
+.flowbite/
+.flowbite-react/
