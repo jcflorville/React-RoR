@@ -1,0 +1,35 @@
+{
+	"name": "react-ror-fullstack",
+	"version": "1.0.0",
+	"description": "Full-stack React + Ruby on Rails application",
+	"private": true,
+	"packageManager": "pnpm@9.0.0",
+	"engines": {
+		"node": "22.16.0",
+		"pnpm": ">=9.0.0"
+	},
+	"scripts": {
+		"dev": "docker compose up --build",
+		"dev:detached": "docker compose up --build -d",
+		"down": "docker compose down",
+		"logs": "docker compose logs -f",
+		"logs:frontend": "docker compose logs -f frontend",
+		"logs:backend": "docker compose logs -f backend",
+		"logs:db": "docker compose logs -f db",
+		"restart": "docker compose restart",
+		"restart:frontend": "docker compose restart frontend",
+		"restart:backend": "docker compose restart backend",
+		"clean": "docker compose down -v --remove-orphans",
+		"rebuild": "docker compose down && docker compose up --build",
+		"frontend:dev": "cd frontend && pnpm run docker:dev",
+		"backend:dev": "cd backend && docker compose -f docker-compose.dev.yml up --build"
+	},
+	"keywords": [
+		"react",
+		"rails",
+		"docker",
+		"fullstack"
+	],
+	"author": "",
+	"license": "ISC"
+}

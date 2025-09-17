@@ -1,5 +1,5 @@
 # Development Dockerfile for React application
-FROM node:22-alpine
+FROM node:22.16.0-alpine
 
 # Disable corepack to avoid signature verification issues
 RUN corepack disable
