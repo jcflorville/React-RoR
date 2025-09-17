@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      # Exclude node_modules to prevent conflicts
+      - /app/node_modules
+    environment:
+      # Enable hot module replacement
+      - CHOKIDAR_USEPOLLING=true
+    stdin_open: true
+    tty: true
+    networks:
+      - react-dev-network
+
+networks:
+  react-dev-network:
+    driver: bridge

@@ -1,0 +1,25 @@
+# Development Dockerfile for React application
+FROM node:22-alpine
+
+# Disable corepack to avoid signature verification issues
+RUN corepack disable
+
+# Install pnpm globally using npm
+RUN npm install -g pnpm@latest
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies
+# Copy package files first for better caching
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install
+
+# Copy source code
+COPY . .
+
+# Expose the port that Vite uses (5173)
+EXPOSE 5173
+
+# Start the development server
+CMD ["pnpm", "dev"]
