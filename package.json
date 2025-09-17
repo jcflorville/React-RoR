@@ -22,7 +22,12 @@
 		"clean": "docker compose down -v --remove-orphans",
 		"rebuild": "docker compose down && docker compose up --build",
 		"frontend:dev": "cd frontend && pnpm run docker:dev",
-		"backend:dev": "cd backend && docker compose -f docker-compose.dev.yml up --build"
+		"backend:dev": "cd backend && docker compose -f docker-compose.dev.yml up --build",
+		"frontend:exec": "docker compose exec frontend",
+		"frontend:install": "docker compose exec frontend pnpm add",
+		"frontend:install-dev": "docker compose exec frontend pnpm add -D",
+		"frontend:reinstall": "docker compose exec frontend pnpm install",
+		"backend:exec": "docker compose exec backend"
 	},
 	"keywords": [
 		"react",
