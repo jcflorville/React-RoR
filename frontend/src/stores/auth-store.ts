@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
-import type { User, AuthState } from "../types/auth"
+import type { User, AuthState } from "@types/auth"
 
 interface AuthActions {
 	login: (user: User, token: string) => void

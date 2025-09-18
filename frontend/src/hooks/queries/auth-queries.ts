@@ -1,73 +1,92 @@
-import { create } from "zustand"
-import { persist, createJSONStorage } from "zustand/middleware"
-import type { User, AuthState } from "../types/auth"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { api } from "@lib/api"
+import { useAuthStore } from "@stores/auth-store"
+import type {
+	AuthResponse,
+	LoginCredentials,
+	RegisterCredentials,
+	User,
+} from "@types/auth"
 
-interface AuthActions {
-	login: (user: User, token: string) => void
-	logout: () => void
-	setUser: (user: User) => void
-	setLoading: (loading: boolean) => void
-	clearAuth: () => void
+// Query Keys
+export const authKeys = {
+	all: ["auth"] as const,
+	me: () => [...authKeys.all, "me"] as const,
 }
 
-type AuthStore = AuthState & AuthActions
+// Hook para buscar dados do usuário atual
+export const useMeQuery = () => {
+	const { isAuthenticated } = useAuthStore()
 
-export const useAuthStore = create<AuthStore>()(
-	persist(
-		(set, get) => ({
-			// Estado inicial
-			user: null,
-			token: null,
-			isAuthenticated: false,
-			isLoading: false,
+	return useQuery({
+		queryKey: authKeys.me(),
+		queryFn: async (): Promise<User> => {
+			const response = await api.get("/auth/me")
+			return response.data.user
+		},
+		enabled: isAuthenticated,
+		staleTime: 5 * 60 * 1000, // 5 minutos
+	})
+}
 
-			// Ações
-			login: (user: User, token: string) => {
-				localStorage.setItem("auth_token", token)
-				set({
-					user,
-					token,
-					isAuthenticated: true,
-					isLoading: false,
-				})
-			},
+// Mutation para login
+export const useLoginMutation = () => {
+	const queryClient = useQueryClient()
+	const { login } = useAuthStore()
 
-			logout: () => {
-				localStorage.removeItem("auth_token")
-				set({
-					user: null,
-					token: null,
-					isAuthenticated: false,
-					isLoading: false,
-				})
-			},
+	return useMutation({
+		mutationFn: async (
+			credentials: LoginCredentials
+		): Promise<AuthResponse> => {
+			const response = await api.post("/auth/login", credentials)
+			return response.data
+		},
+		onSuccess: (data) => {
+			login(data.user, data.token)
+			queryClient.setQueryData(authKeys.me(), data.user)
+		},
+		onError: (error) => {
+			console.error("Login failed:", error)
+		},
+	})
+}
 
-			setUser: (user: User) => {
-				set({ user })
-			},
+// Mutation para registro
+export const useRegisterMutation = () => {
+	const queryClient = useQueryClient()
+	const { login } = useAuthStore()
 
-			setLoading: (loading: boolean) => {
-				set({ isLoading: loading })
-			},
+	return useMutation({
+		mutationFn: async (
+			credentials: RegisterCredentials
+		): Promise<AuthResponse> => {
+			const response = await api.post("/auth/register", credentials)
+			return response.data
+		},
+		onSuccess: (data) => {
+			login(data.user, data.token)
+			queryClient.setQueryData(authKeys.me(), data.user)
+		},
+	})
+}
 
-			clearAuth: () => {
-				localStorage.removeItem("auth_token")
-				set({
-					user: null,
-					token: null,
-					isAuthenticated: false,
-					isLoading: false,
-				})
-			},
-		}),
-		{
-			name: "auth-storage",
-			storage: createJSONStorage(() => localStorage),
-			partialize: (state) => ({
-				user: state.user,
-				token: state.token,
-				isAuthenticated: state.isAuthenticated,
-			}),
-		}
-	)
-)
+// Mutation para logout
+export const useLogoutMutation = () => {
+	const queryClient = useQueryClient()
+	const { logout } = useAuthStore()
+
+	return useMutation({
+		mutationFn: async () => {
+			await api.post("/auth/logout")
+		},
+		onSuccess: () => {
+			logout()
+			queryClient.clear() // Limpa todo o cache
+		},
+		onError: () => {
+			// Mesmo com erro, fazemos logout local
+			logout()
+			queryClient.clear()
+		},
+	})
+}
