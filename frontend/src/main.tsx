@@ -2,6 +2,7 @@ import { StrictMode } from "react"
 import ReactDOM from "react-dom/client"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
 import { ThemeProvider } from "flowbite-react"
+import { AppProviders } from "./providers/app-providers"
 import "./styles.css"
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen"
@@ -22,9 +23,11 @@ if (!rootElement.innerHTML) {
 	const root = ReactDOM.createRoot(rootElement)
 	root.render(
 		<StrictMode>
-			<ThemeProvider>
-				<RouterProvider router={router} />
-			</ThemeProvider>
+			<AppProviders>
+				<ThemeProvider>
+					<RouterProvider router={router} />
+				</ThemeProvider>
+			</AppProviders>
 		</StrictMode>
 	)
 }
