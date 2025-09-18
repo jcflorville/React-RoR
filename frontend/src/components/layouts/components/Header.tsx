@@ -1,15 +1,21 @@
 import { Link } from "@tanstack/react-router"
 import {
+	Avatar,
+	Dropdown,
+	DropdownDivider,
+	DropdownHeader,
+	DropdownItem,
 	Navbar,
 	NavbarBrand,
 	NavbarCollapse,
 	NavbarLink,
 	NavbarToggle,
+	DarkThemeToggle,
 } from "flowbite-react"
 
 export const AppHeader = () => {
 	return (
-		<Navbar fluid rounded className='border-b'>
+		<Navbar fluid rounded>
 			<NavbarBrand>
 				<Link to='/' className='flex items-center'>
 					<img src='/vite.svg' className='mr-3 h-6 sm:h-9' alt='Logo' />
@@ -18,9 +24,35 @@ export const AppHeader = () => {
 					</span>
 				</Link>
 			</NavbarBrand>
-
-			<NavbarToggle />
-
+			<div className='flex md:order-2'>
+				<div className='mr-4 flex items-center'>
+					<DarkThemeToggle />
+				</div>
+				<Dropdown
+					arrowIcon={false}
+					inline
+					label={
+						<Avatar
+							alt='User settings'
+							img='https://flowbite.com/docs/images/people/profile-picture-5.jpg'
+							rounded
+						/>
+					}
+				>
+					<DropdownHeader>
+						<span className='block text-sm'>Bonnie Green</span>
+						<span className='block truncate text-sm font-medium'>
+							name@flowbite.com
+						</span>
+					</DropdownHeader>
+					<DropdownItem>Dashboard</DropdownItem>
+					<DropdownItem>Settings</DropdownItem>
+					<DropdownItem>Earnings</DropdownItem>
+					<DropdownDivider />
+					<DropdownItem>Sign out</DropdownItem>
+				</Dropdown>
+				<NavbarToggle />
+			</div>
 			<NavbarCollapse>
 				<NavbarLink>
 					<Link
@@ -39,21 +71,6 @@ export const AppHeader = () => {
 						About
 					</Link>
 				</NavbarLink>
-
-				<div className='flex items-center gap-2 mt-2 lg:mt-0'>
-					<Link
-						to='/sign-in'
-						className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors'
-					>
-						Sign In
-					</Link>
-					<Link
-						to='/sign-up'
-						className='bg-cyan-700 hover:bg-cyan-800 text-white px-4 py-2 rounded-lg transition-colors'
-					>
-						Sign Up
-					</Link>
-				</div>
 			</NavbarCollapse>
 		</Navbar>
 	)
