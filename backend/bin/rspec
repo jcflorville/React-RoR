@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+RAILS_ENV=test
+DATABASE_URL=postgresql://postgres:password@db:5432/myapp_test
+DEVISE_JWT_SECRET_KEY=9324fd6440b83533ad28ead88cc0d0c1aa28c006544cf52773769c1627f51d79893667323c3a963528136b4ed788ea6ae274fbc4dfc50f4129e71c828c773669
+
+echo "Setting up test database..."
+bundle exec rails db:drop db:create db:migrate
+
+echo "Running tests..."
+bundle exec rspec "$@"

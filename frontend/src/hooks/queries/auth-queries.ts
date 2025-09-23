@@ -38,14 +38,14 @@ export const useLoginMutation = () => {
 		mutationFn: async (
 			credentials: LoginCredentials
 		): Promise<AuthResponse> => {
-			const response = await api.post("/auth/login", credentials)
+			const response = await api.post("/auth/sign_in", credentials)
 			return response.data
 		},
-		onSuccess: (data) => {
+		onSuccess: (data: AuthResponse) => {
 			login(data.user, data.token)
 			queryClient.setQueryData(authKeys.me(), data.user)
 		},
-		onError: (error) => {
+		onError: (error: Error) => {
 			console.error("Login failed:", error)
 		},
 	})
@@ -56,14 +56,14 @@ export const useRegisterMutation = () => {
 	const queryClient = useQueryClient()
 	const { login } = useAuthStore()
 
-	return useMutation({
+	return useMutation<AuthResponse, Error, RegisterCredentials>({
 		mutationFn: async (
 			credentials: RegisterCredentials
 		): Promise<AuthResponse> => {
-			const response = await api.post("/auth/register", credentials)
+			const response = await api.post("/auth/sign_up", credentials)
 			return response.data
 		},
-		onSuccess: (data) => {
+		onSuccess: (data: AuthResponse) => {
 			login(data.user, data.token)
 			queryClient.setQueryData(authKeys.me(), data.user)
 		},
@@ -77,7 +77,7 @@ export const useLogoutMutation = () => {
 
 	return useMutation({
 		mutationFn: async () => {
-			await api.post("/auth/logout")
+			await api.post("/auth/sign_out")
 		},
 		onSuccess: () => {
 			logout()
