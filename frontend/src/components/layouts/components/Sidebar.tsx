@@ -1,3 +1,4 @@
+// frontend/src/components/layouts/components/Sidebar.tsx
 import { Link } from "@tanstack/react-router"
 import {
 	Sidebar,
@@ -5,28 +6,39 @@ import {
 	SidebarItemGroup,
 	SidebarItems,
 } from "flowbite-react"
+import { useLogoutMutation } from "@hooks/queries/auth-queries"
 
 interface DashboardSidebarProps {
 	collapsed: boolean
 }
 
 export const DashboardSidebar = ({ collapsed }: DashboardSidebarProps) => {
+	const logoutMutation = useLogoutMutation()
+
+	const handleLogout = () => {
+		logoutMutation.mutate()
+	}
+
 	return (
 		<Sidebar className='h-full overflow-hidden'>
 			<SidebarItems>
 				<SidebarItemGroup>
+					{/* ✅ CORREÇÃO: Usar as prop do SidebarItem ao invés de Link aninhado */}
 					<SidebarItem
+						as={Link}
+						to='/dashboard'
 						icon={() => (
 							<svg className='w-5 h-5' fill='currentColor' viewBox='0 0 20 20'>
 								<path d='M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z' />
 							</svg>
 						)}
-						title={collapsed ? "Dashboard" : undefined}
 					>
-						{!collapsed && <Link to='/dashboard'>Dashboard</Link>}
+						{!collapsed && "Dashboard"}
 					</SidebarItem>
 
 					<SidebarItem
+						as={Link}
+						to='/dashboard/profile'
 						icon={() => (
 							<svg className='w-5 h-5' fill='currentColor' viewBox='0 0 20 20'>
 								<path
@@ -36,23 +48,25 @@ export const DashboardSidebar = ({ collapsed }: DashboardSidebarProps) => {
 								/>
 							</svg>
 						)}
-						title={collapsed ? "Profile" : undefined}
 					>
 						{!collapsed && "Profile"}
 					</SidebarItem>
 
 					<SidebarItem
+						as={Link}
+						to='/dashboard/projects'
 						icon={() => (
 							<svg className='w-5 h-5' fill='currentColor' viewBox='0 0 20 20'>
 								<path d='M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z' />
 							</svg>
 						)}
-						title={collapsed ? "Projects" : undefined}
 					>
 						{!collapsed && "Projects"}
 					</SidebarItem>
 
 					<SidebarItem
+						as={Link}
+						to='/dashboard/documents'
 						icon={() => (
 							<svg className='w-5 h-5' fill='currentColor' viewBox='0 0 20 20'>
 								<path
@@ -62,23 +76,25 @@ export const DashboardSidebar = ({ collapsed }: DashboardSidebarProps) => {
 								/>
 							</svg>
 						)}
-						title={collapsed ? "Documents" : undefined}
 					>
 						{!collapsed && "Documents"}
 					</SidebarItem>
 
 					<SidebarItem
+						as={Link}
+						to='/dashboard/notifications'
 						icon={() => (
 							<svg className='w-5 h-5' fill='currentColor' viewBox='0 0 20 20'>
 								<path d='M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z' />
 							</svg>
 						)}
-						title={collapsed ? "Notifications" : undefined}
 					>
 						{!collapsed && "Notifications"}
 					</SidebarItem>
 
 					<SidebarItem
+						as={Link}
+						to='/dashboard/kanban'
 						icon={() => (
 							<svg className='w-5 h-5' fill='currentColor' viewBox='0 0 20 20'>
 								<path
@@ -88,12 +104,13 @@ export const DashboardSidebar = ({ collapsed }: DashboardSidebarProps) => {
 								/>
 							</svg>
 						)}
-						title={collapsed ? "Kanban" : undefined}
 					>
 						{!collapsed && "Kanban"}
 					</SidebarItem>
 
 					<SidebarItem
+						as={Link}
+						to='/dashboard/inbox'
 						icon={() => (
 							<svg className='w-5 h-5' fill='currentColor' viewBox='0 0 20 20'>
 								<path
@@ -103,12 +120,13 @@ export const DashboardSidebar = ({ collapsed }: DashboardSidebarProps) => {
 								/>
 							</svg>
 						)}
-						title={collapsed ? "Inbox" : undefined}
 					>
 						{!collapsed && "Inbox"}
 					</SidebarItem>
 
 					<SidebarItem
+						as={Link}
+						to='/dashboard/users'
 						icon={() => (
 							<svg className='w-5 h-5' fill='currentColor' viewBox='0 0 20 20'>
 								<path
@@ -118,7 +136,6 @@ export const DashboardSidebar = ({ collapsed }: DashboardSidebarProps) => {
 								/>
 							</svg>
 						)}
-						title={collapsed ? "Users" : undefined}
 					>
 						{!collapsed && "Users"}
 					</SidebarItem>
@@ -126,6 +143,8 @@ export const DashboardSidebar = ({ collapsed }: DashboardSidebarProps) => {
 
 				<SidebarItemGroup>
 					<SidebarItem
+						as={Link}
+						to='/dashboard/settings'
 						icon={() => (
 							<svg className='w-5 h-5' fill='currentColor' viewBox='0 0 20 20'>
 								<path
@@ -135,14 +154,20 @@ export const DashboardSidebar = ({ collapsed }: DashboardSidebarProps) => {
 								/>
 							</svg>
 						)}
-						title={collapsed ? "Settings" : undefined}
 					>
 						{!collapsed && "Settings"}
 					</SidebarItem>
 
+					{/* ✅ CORREÇÃO: Usar onClick para logout ao invés de Link */}
 					<SidebarItem
+						onClick={handleLogout}
+						className='cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20'
 						icon={() => (
-							<svg className='w-5 h-5' fill='currentColor' viewBox='0 0 20 20'>
+							<svg
+								className='w-5 h-5 text-red-600'
+								fill='currentColor'
+								viewBox='0 0 20 20'
+							>
 								<path
 									fillRule='evenodd'
 									d='M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z'
@@ -150,9 +175,12 @@ export const DashboardSidebar = ({ collapsed }: DashboardSidebarProps) => {
 								/>
 							</svg>
 						)}
-						title={collapsed ? "Sign Out" : undefined}
 					>
-						{!collapsed ? <Link to='/sign-in'>Sign Out</Link> : null}
+						{!collapsed && (
+							<span className='text-red-600'>
+								{logoutMutation.isPending ? "Signing out..." : "Sign Out"}
+							</span>
+						)}
 					</SidebarItem>
 				</SidebarItemGroup>
 			</SidebarItems>

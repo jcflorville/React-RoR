@@ -1,92 +1,112 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+// frontend/src/hooks/queries/auth-queries.ts
 import { api } from "@lib/api"
+import { useMutation } from "@tanstack/react-query"
+import { useNavigate } from "@tanstack/react-router"
 import { useAuthStore } from "@stores/auth-store"
 import type {
-	AuthResponse,
 	LoginCredentials,
 	RegisterCredentials,
-	User,
+	AuthResponse,
 } from "@types/auth"
-
-// Query Keys
-export const authKeys = {
-	all: ["auth"] as const,
-	me: () => [...authKeys.all, "me"] as const,
-}
-
-// Hook para buscar dados do usuário atual
-export const useMeQuery = () => {
-	const { isAuthenticated } = useAuthStore()
-
-	return useQuery({
-		queryKey: authKeys.me(),
-		queryFn: async (): Promise<User> => {
-			const response = await api.get("/auth/me")
-			return response.data.user
-		},
-		enabled: isAuthenticated,
-		staleTime: 5 * 60 * 1000, // 5 minutos
-	})
-}
 
 // Mutation para login
 export const useLoginMutation = () => {
-	const queryClient = useQueryClient()
 	const { login } = useAuthStore()
 
 	return useMutation({
 		mutationFn: async (
 			credentials: LoginCredentials
-		): Promise<AuthResponse> => {
-			const response = await api.post("/auth/sign_in", credentials)
-			return response.data
+		): Promise<{ data: AuthResponse; headers: any }> => {
+			const response = await api.post("/auth/sign_in", {
+				user: credentials,
+			})
+			return {
+				data: response.data,
+				headers: response.headers,
+			}
 		},
-		onSuccess: (data: AuthResponse) => {
-			login(data.user, data.token)
-			queryClient.setQueryData(authKeys.me(), data.user)
+		onSuccess: ({ data, headers }) => {
+			console.log("🔍 Login response:", data)
+			console.log("🔍 Response headers:", headers)
+
+			const authHeader = headers["authorization"] || headers["Authorization"]
+			const token = authHeader ? authHeader.replace("Bearer ", "") : null
+			const user = data.data || data.user
+
+			console.log("🔍 Extracted:", { token, user })
+
+			if (token && user) {
+				login(user, token)
+				console.log("✅ Auth set via Zustand store")
+			} else {
+				console.error("❌ Missing token or user in response")
+			}
 		},
-		onError: (error: Error) => {
-			console.error("Login failed:", error)
+		onError: (error) => {
+			console.error("Login error:", error)
 		},
 	})
 }
 
-// Mutation para registro
+// Mutation para register
 export const useRegisterMutation = () => {
-	const queryClient = useQueryClient()
 	const { login } = useAuthStore()
 
-	return useMutation<AuthResponse, Error, RegisterCredentials>({
+	return useMutation({
 		mutationFn: async (
-			credentials: RegisterCredentials
-		): Promise<AuthResponse> => {
-			const response = await api.post("/auth/sign_up", credentials)
-			return response.data
+			userData: RegisterCredentials
+		): Promise<{ data: AuthResponse; headers: any }> => {
+			const response = await api.post("/auth/sign_up", {
+				user: userData,
+			})
+			return {
+				data: response.data,
+				headers: response.headers,
+			}
 		},
-		onSuccess: (data: AuthResponse) => {
-			login(data.user, data.token)
-			queryClient.setQueryData(authKeys.me(), data.user)
+		onSuccess: ({ data, headers }) => {
+			console.log("🔍 Register response:", data)
+			console.log("🔍 Response headers:", headers)
+
+			const authHeader = headers["authorization"] || headers["Authorization"]
+			const token = authHeader ? authHeader.replace("Bearer ", "") : null
+			const user = data.data || data.user
+
+			console.log("🔍 Extracted:", { token, user })
+
+			if (token && user) {
+				login(user, token)
+				console.log("✅ Auth set via Zustand store")
+			} else {
+				console.error("❌ Missing token or user in response")
+			}
+		},
+		onError: (error) => {
+			console.error("Register error:", error)
 		},
 	})
 }
 
 // Mutation para logout
 export const useLogoutMutation = () => {
-	const queryClient = useQueryClient()
+	const navigate = useNavigate()
 	const { logout } = useAuthStore()
 
 	return useMutation({
 		mutationFn: async () => {
-			await api.post("/auth/sign_out")
+			try {
+				await api.delete("/auth/sign_out")
+			} catch (error) {
+				console.warn("Logout request failed, but clearing local auth")
+			}
 		},
 		onSuccess: () => {
 			logout()
-			queryClient.clear() // Limpa todo o cache
+			navigate({ to: "/" })
 		},
 		onError: () => {
-			// Mesmo com erro, fazemos logout local
 			logout()
-			queryClient.clear()
+			navigate({ to: "/" })
 		},
 	})
 }

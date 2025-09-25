@@ -1,32 +1,33 @@
+// frontend/src/lib/api.ts
 import axios from "axios"
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000"
+import { useAuthStore } from "@stores/auth-store"
 
 export const api = axios.create({
-	baseURL: `${API_URL}/api/v1`,
+	baseURL: "http://localhost:3000/api/v1",
 	headers: {
 		"Content-Type": "application/json",
 	},
 })
 
-// Interceptor para adicionar token automaticamente
+// ✅ INTERCEPTOR SIMPLES: Só adicionar token
 api.interceptors.request.use((config) => {
-	const token = localStorage.getItem("auth_token")
+	const token = useAuthStore.getState().token
+
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`
 	}
+
 	return config
 })
 
-// Interceptor para tratar respostas e erros
+// ✅ INTERCEPTOR RESPONSE: Só logs (opcional)
 api.interceptors.response.use(
 	(response) => response,
 	(error) => {
-		if (error.response?.status === 401) {
-			// Token expirado ou inválido
-			localStorage.removeItem("auth_token")
-			window.location.href = "/login"
-		}
+		// ✅ Log para debug (opcional)
+		console.log(`API Error: ${error.response?.status} - ${error.config?.url}`)
+
+		// ✅ SEMPRE repassar erro sem modificar
 		return Promise.reject(error)
 	}
 )

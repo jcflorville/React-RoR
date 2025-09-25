@@ -1,12 +1,24 @@
+// frontend/src/routes/sign-in.tsx
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { AuthLayout } from "../components/layouts/AuthLayout"
 import { Button, Label, TextInput, Checkbox } from "flowbite-react"
+import { useLoginForm } from "@hooks/use-auth-form"
+import { useFormError } from "@hooks/use-form-error"
 
 export const Route = createFileRoute("/sign-in")({
 	component: SignInPage,
 })
 
 function SignInPage() {
+	const {
+		register,
+		onSubmit,
+		formState: { errors },
+		isLoading,
+		error,
+	} = useLoginForm()
+	const { ErrorComponent } = useFormError(error)
+
 	return (
 		<AuthLayout>
 			<div className='space-y-6'>
@@ -19,31 +31,42 @@ function SignInPage() {
 					</p>
 				</div>
 
-				<form className='space-y-6'>
+				{ErrorComponent}
+
+				{/* ✅ CORREÇÃO: onSubmit já tem preventDefault via handleSubmit */}
+				<form className='space-y-6' onSubmit={onSubmit}>
 					<div>
 						<Label htmlFor='email'>Email address</Label>
 						<TextInput
 							id='email'
-							name='email'
 							type='email'
-							autoComplete='email'
-							required
 							placeholder='Enter your email'
 							className='mt-1'
+							color={errors.email ? "failure" : undefined}
+							{...register("email")}
 						/>
+						{errors.email && (
+							<p className='mt-1 text-sm text-red-600 dark:text-red-400'>
+								{errors.email.message}
+							</p>
+						)}
 					</div>
 
 					<div>
 						<Label htmlFor='password'>Password</Label>
 						<TextInput
 							id='password'
-							name='password'
 							type='password'
-							autoComplete='current-password'
-							required
 							placeholder='Enter your password'
 							className='mt-1'
+							color={errors.password ? "failure" : undefined}
+							{...register("password")}
 						/>
+						{errors.password && (
+							<p className='mt-1 text-sm text-red-600 dark:text-red-400'>
+								{errors.password.message}
+							</p>
+						)}
 					</div>
 
 					<div className='flex items-center justify-between'>
@@ -69,8 +92,9 @@ function SignInPage() {
 							type='submit'
 							className='w-full bg-cyan-700 hover:bg-cyan-800'
 							size='lg'
+							disabled={isLoading}
 						>
-							Sign in
+							{isLoading ? "Signing in..." : "Sign in"}
 						</Button>
 					</div>
 				</form>

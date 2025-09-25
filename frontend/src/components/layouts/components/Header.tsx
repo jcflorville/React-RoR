@@ -1,4 +1,5 @@
-import { Link } from "@tanstack/react-router"
+// frontend/src/components/layouts/components/Header.tsx
+import { Link, useNavigate } from "@tanstack/react-router"
 import {
 	Avatar,
 	Button,
@@ -7,37 +8,28 @@ import {
 	DropdownHeader,
 	DropdownItem,
 	Navbar,
-	NavbarBrand,
 	NavbarCollapse,
 	NavbarLink,
 	NavbarToggle,
 	DarkThemeToggle,
 } from "flowbite-react"
-
-// ✨ Imports limpos com path aliases
-import { useAuth } from "@hooks/use-auth"
+import { useAuthStore } from "@stores/auth-store"
 import { useLogoutMutation } from "@hooks/queries/auth-queries"
 
 export const AppHeader = () => {
-	const { user, isAuthenticated, isLoading } = useAuth()
+	const { user, isAuthenticated } = useAuthStore() // ✅ Direto do store
 	const logoutMutation = useLogoutMutation()
+	const navigate = useNavigate()
 
 	const handleLogout = () => {
 		logoutMutation.mutate()
 	}
 
-	const renderAuthSection = () => {
-		// Loading state
-		if (isLoading) {
-			return (
-				<div className='flex items-center space-x-2'>
-					<div className='animate-pulse'>
-						<div className='h-8 w-8 bg-gray-300 rounded-full'></div>
-					</div>
-				</div>
-			)
-		}
+	const handleLogoClick = () => {
+		navigate({ to: "/" })
+	}
 
+	const renderAuthSection = () => {
 		// Authenticated user
 		if (isAuthenticated && user) {
 			return (
@@ -55,19 +47,16 @@ export const AppHeader = () => {
 					}
 				>
 					<DropdownHeader>
-						<span className='block text-sm font-medium'>{user.name}</span>
-						<span className='block truncate text-sm text-gray-500'>
+						<span className='block text-sm'>{user.name}</span>
+						<span className='block truncate text-sm font-medium'>
 							{user.email}
 						</span>
 					</DropdownHeader>
 					<DropdownItem as={Link} to='/dashboard'>
 						Dashboard
 					</DropdownItem>
-					<DropdownItem as={Link} to='/profile'>
+					<DropdownItem as={Link} to='/dashboard/profile'>
 						Profile
-					</DropdownItem>
-					<DropdownItem as={Link} to='/settings'>
-						Settings
 					</DropdownItem>
 					<DropdownDivider />
 					<DropdownItem
@@ -85,14 +74,14 @@ export const AppHeader = () => {
 			<div className='flex items-center space-x-2'>
 				<Button
 					as={Link}
-					to='/login'
+					to='/sign-in'
 					color='gray'
 					size='sm'
 					className='border-gray-300 hover:bg-gray-50'
 				>
 					Sign In
 				</Button>
-				<Button as={Link} to='/register' color='blue' size='sm'>
+				<Button as={Link} to='/sign-up' color='blue' size='sm'>
 					Sign Up
 				</Button>
 			</div>
@@ -101,14 +90,15 @@ export const AppHeader = () => {
 
 	return (
 		<Navbar fluid rounded>
-			<NavbarBrand>
-				<Link to='/' className='flex items-center'>
-					<img src='/vite.svg' className='mr-3 h-6 sm:h-9' alt='Logo' />
-					<span className='self-center whitespace-nowrap text-xl font-semibold dark:text-white'>
-						React-RoR
-					</span>
-				</Link>
-			</NavbarBrand>
+			<div
+				className='flex items-center cursor-pointer'
+				onClick={handleLogoClick}
+			>
+				<img src='/vite.svg' className='mr-3 h-6 sm:h-9' alt='Logo' />
+				<span className='self-center whitespace-nowrap text-xl font-semibold dark:text-white'>
+					React-RoR
+				</span>
+			</div>
 
 			<div className='flex md:order-2'>
 				<div className='mr-4 flex items-center'>
@@ -121,19 +111,19 @@ export const AppHeader = () => {
 			</div>
 
 			<NavbarCollapse>
-				<NavbarLink>
+				<NavbarLink as='div'>
 					<Link
 						to='/'
-						className='[&.active]:text-cyan-700 hover:text-cyan-600 transition-colors'
+						className='block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent [&.active]:text-cyan-700'
 					>
 						Home
 					</Link>
 				</NavbarLink>
 
-				<NavbarLink>
+				<NavbarLink as='div'>
 					<Link
 						to='/about'
-						className='[&.active]:text-cyan-700 hover:text-cyan-600 transition-colors'
+						className='block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent [&.active]:text-cyan-700'
 					>
 						About
 					</Link>
@@ -141,18 +131,18 @@ export const AppHeader = () => {
 
 				{isAuthenticated && (
 					<>
-						<NavbarLink>
+						<NavbarLink as='div'>
 							<Link
 								to='/dashboard'
-								className='[&.active]:text-cyan-700 hover:text-cyan-600 transition-colors'
+								className='block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent [&.active]:text-cyan-700'
 							>
 								Dashboard
 							</Link>
 						</NavbarLink>
-						<NavbarLink>
+						<NavbarLink as='div'>
 							<Link
-								to='/profile'
-								className='[&.active]:text-cyan-700 hover:text-cyan-600 transition-colors'
+								to='/dashboard/profile'
+								className='block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent [&.active]:text-cyan-700'
 							>
 								Profile
 							</Link>
