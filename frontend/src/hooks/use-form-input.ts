@@ -1,5 +1,5 @@
 // frontend/src/hooks/use-form-input.ts
-import { UseFormRegister, FieldErrors } from "react-hook-form"
+import type { UseFormRegister, FieldErrors } from "react-hook-form"
 
 interface UseFormInputProps {
 	name: string

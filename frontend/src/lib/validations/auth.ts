@@ -18,15 +18,14 @@ export const registerSchema = z
 			.string()
 			.min(1, "Name is required")
 			.min(2, "Name must be at least 2 characters"),
-		email: z
-			.string()
-			.min(1, "Email is required")
-			.email("Please enter a valid email"),
+		email: z.string().min(1, "Email is required").email("Invalid email format"),
 		password: z
 			.string()
 			.min(1, "Password is required")
 			.min(6, "Password must be at least 6 characters"),
-		password_confirmation: z.string().min(1, "Please confirm your password"),
+		password_confirmation: z
+			.string()
+			.min(1, "Password confirmation is required"),
 	})
 	.refine((data) => data.password === data.password_confirmation, {
 		message: "Passwords don't match",

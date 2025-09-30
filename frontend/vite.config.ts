@@ -1,7 +1,7 @@
 import tailwindcss from "@tailwindcss/vite"
-import { TanStackRouterVite } from "@tanstack/router-plugin/vite"
+import { tanstackRouter } from "@tanstack/router-plugin/vite"
 import { defineConfig } from "vite"
-// import tsConfigPaths from "vite-tsconfig-paths"
+import tsConfigPaths from "vite-tsconfig-paths"
 import react from "@vitejs/plugin-react-swc"
 import flowbiteReact from "flowbite-react/plugin/vite"
 import path from "path"
@@ -10,11 +10,11 @@ import path from "path"
 export default defineConfig({
 	plugins: [
 		tailwindcss(),
-		TanStackRouterVite({
+		tanstackRouter({
 			target: "react",
 			autoCodeSplitting: true,
 		}),
-		// tsConfigPaths(),
+		tsConfigPaths(),
 		react(),
 		flowbiteReact(),
 	],
@@ -24,6 +24,7 @@ export default defineConfig({
 			"@components": path.resolve(__dirname, "./src/components"),
 			"@layouts": path.resolve(__dirname, "./src/components/layouts"),
 			"@hooks": path.resolve(__dirname, "./src/hooks"),
+			"@queries": path.resolve(__dirname, "./src/hooks/queries"),
 			"@stores": path.resolve(__dirname, "./src/stores"),
 			"@lib": path.resolve(__dirname, "./src/lib"),
 			"@types": path.resolve(__dirname, "./src/types"),

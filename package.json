@@ -3,6 +3,10 @@
 	"version": "1.0.0",
 	"description": "Full-stack React + Ruby on Rails application",
 	"private": true,
+	"workspaces": [
+		"frontend",
+		"backend"
+	],
 	"packageManager": "pnpm@9.0.0",
 	"engines": {
 		"node": "22.16.0",

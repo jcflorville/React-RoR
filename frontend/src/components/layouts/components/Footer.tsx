@@ -1,13 +1,4 @@
-import {
-	Footer,
-	FooterBrand,
-	FooterCopyright,
-	FooterDivider,
-	FooterIcon,
-	FooterLink,
-	FooterLinkGroup,
-	FooterTitle,
-} from "flowbite-react"
+import { Footer, FooterCopyright, FooterIcon } from "flowbite-react"
 
 export const AppFooter = () => {
 	return (

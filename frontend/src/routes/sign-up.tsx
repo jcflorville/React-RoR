@@ -1,12 +1,24 @@
+// frontend/src/routes/sign-up.tsx
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { AuthLayout } from "../components/layouts/AuthLayout"
 import { Button, Label, TextInput, Checkbox } from "flowbite-react"
+import { useRegisterForm } from "@hooks/use-auth-form"
+import { useFormError } from "@hooks/use-form-error"
 
 export const Route = createFileRoute("/sign-up")({
 	component: SignUpPage,
 })
 
 function SignUpPage() {
+	const {
+		register,
+		onSubmit,
+		formState: { errors },
+		isLoading,
+		error,
+	} = useRegisterForm()
+	const { ErrorComponent } = useFormError(error)
+
 	return (
 		<AuthLayout>
 			<div className='space-y-6'>
@@ -19,72 +31,75 @@ function SignUpPage() {
 					</p>
 				</div>
 
-				<form className='space-y-6'>
-					<div className='grid grid-cols-1 gap-6 sm:grid-cols-2'>
-						<div>
-							<Label htmlFor='firstName'>First name</Label>
-							<TextInput
-								id='firstName'
-								name='firstName'
-								type='text'
-								autoComplete='given-name'
-								required
-								placeholder='Enter your first name'
-								className='mt-1'
-							/>
-						</div>
+				{ErrorComponent}
 
-						<div>
-							<Label htmlFor='lastName'>Last name</Label>
-							<TextInput
-								id='lastName'
-								name='lastName'
-								type='text'
-								autoComplete='family-name'
-								required
-								placeholder='Enter your last name'
-								className='mt-1'
-							/>
-						</div>
+				<form className='space-y-6' onSubmit={onSubmit}>
+					<div>
+						<Label htmlFor='name'>Full name</Label>
+						<TextInput
+							id='name'
+							type='text'
+							placeholder='Enter your full name'
+							className='mt-1'
+							color={errors.name ? "failure" : undefined}
+							{...register("name")}
+						/>
+						{errors.name && (
+							<p className='mt-1 text-sm text-red-600 dark:text-red-400'>
+								{errors.name.message}
+							</p>
+						)}
 					</div>
 
 					<div>
 						<Label htmlFor='email'>Email address</Label>
 						<TextInput
 							id='email'
-							name='email'
 							type='email'
-							autoComplete='email'
-							required
 							placeholder='Enter your email'
 							className='mt-1'
+							color={errors.email ? "failure" : undefined}
+							{...register("email")}
 						/>
+						{errors.email && (
+							<p className='mt-1 text-sm text-red-600 dark:text-red-400'>
+								{errors.email.message}
+							</p>
+						)}
 					</div>
 
 					<div>
 						<Label htmlFor='password'>Password</Label>
 						<TextInput
 							id='password'
-							name='password'
 							type='password'
-							autoComplete='new-password'
-							required
 							placeholder='Create a password'
 							className='mt-1'
+							color={errors.password ? "failure" : undefined}
+							{...register("password")}
 						/>
+						{errors.password && (
+							<p className='mt-1 text-sm text-red-600 dark:text-red-400'>
+								{errors.password.message}
+							</p>
+						)}
 					</div>
 
 					<div>
-						<Label htmlFor='confirmPassword'>Confirm password</Label>
+						<Label htmlFor='password_confirmation'>Confirm password</Label>
 						<TextInput
-							id='confirmPassword'
-							name='confirmPassword'
+							id='password_confirmation'
 							type='password'
-							autoComplete='new-password'
-							required
 							placeholder='Confirm your password'
 							className='mt-1'
+							color={errors.password_confirmation ? "failure" : undefined}
+							{...register("password_confirmation")}
 						/>
+						{errors.password_confirmation && (
+							<p className='mt-1 text-sm text-red-600 dark:text-red-400'>
+								{errors.password_confirmation.message}
+							</p>
+						)}
 					</div>
 
 					<div className='flex items-center'>
@@ -112,8 +127,9 @@ function SignUpPage() {
 							type='submit'
 							className='w-full bg-cyan-700 hover:bg-cyan-800'
 							size='lg'
+							disabled={isLoading}
 						>
-							Create account
+							{isLoading ? "Creating account..." : "Create account"}
 						</Button>
 					</div>
 				</form>

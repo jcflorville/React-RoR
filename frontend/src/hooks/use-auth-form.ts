@@ -2,7 +2,7 @@
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from "@tanstack/react-router"
-import { useLoginMutation, useRegisterMutation } from "./queries/auth-queries"
+import { useLoginMutation, useRegisterMutation } from "@queries/auth-queries"
 import {
 	loginSchema,
 	registerSchema,
@@ -23,8 +23,7 @@ export const useLoginForm = () => {
 		},
 	})
 
-	// ✅ CORREÇÃO: Usar SubmitHandler
-	const onSubmit: SubmitHandler<LoginFormData> = (data) => {
+	const onSubmit: SubmitHandler<LoginFormData> = (data: any) => {
 		console.log("🔍 Form submitted with data:", data)
 
 		loginMutation.mutate(data, {
@@ -32,23 +31,21 @@ export const useLoginForm = () => {
 				console.log("🔍 Login SUCCESS - navigating to dashboard")
 				navigate({ to: "/dashboard" })
 			},
-			onError: (error) => {
+			onError: (error: any) => {
 				console.log("🔍 Login ERROR occurred:", error)
-				// NÃO redirecionar - deixar erro ser mostrado
 			},
 		})
 	}
 
 	return {
 		...form,
-		onSubmit: form.handleSubmit(onSubmit), // ✅ handleSubmit já gerencia preventDefault
+		onSubmit: form.handleSubmit(onSubmit),
 		isLoading: loginMutation.isPending,
 		error: loginMutation.error,
 		mutation: loginMutation,
 	}
 }
 
-// Hook para Register
 export const useRegisterForm = () => {
 	const navigate = useNavigate()
 	const registerMutation = useRegisterMutation()
@@ -63,14 +60,16 @@ export const useRegisterForm = () => {
 		},
 	})
 
-	// ✅ CORREÇÃO: Usar SubmitHandler
 	const onSubmit: SubmitHandler<RegisterFormData> = (data) => {
+		console.log("🔍 Register form submitted with data:", data)
+
 		registerMutation.mutate(data, {
 			onSuccess: () => {
+				console.log("🔍 Register SUCCESS - navigating to dashboard")
 				navigate({ to: "/dashboard" })
 			},
-			onError: (error) => {
-				console.error("Registration failed:", error)
+			onError: (error: any) => {
+				console.log("🔍 Register ERROR occurred:", error)
 			},
 		})
 	}

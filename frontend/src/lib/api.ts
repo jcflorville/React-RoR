@@ -10,9 +10,8 @@ export const api = axios.create({
 })
 
 // ✅ INTERCEPTOR SIMPLES: Só adicionar token
-api.interceptors.request.use((config) => {
+api.interceptors.request.use((config: any) => {
 	const token = useAuthStore.getState().token
-
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`
 	}
@@ -22,8 +21,8 @@ api.interceptors.request.use((config) => {
 
 // ✅ INTERCEPTOR RESPONSE: Só logs (opcional)
 api.interceptors.response.use(
-	(response) => response,
-	(error) => {
+	(response: any) => response,
+	(error: any) => {
 		// ✅ Log para debug (opcional)
 		console.log(`API Error: ${error.response?.status} - ${error.config?.url}`)
 

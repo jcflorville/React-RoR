@@ -12,6 +12,8 @@
 		"allowImportingTsExtensions": true,
 		"verbatimModuleSyntax": true,
 		"moduleDetection": "force",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
 		"noEmit": true,
 		"jsx": "react-jsx",
 
@@ -23,13 +25,14 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
 
-		// Path aliases
+		/* Path aliases */
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"],
 			"@components/*": ["./src/components/*"],
 			"@layouts/*": ["./src/components/layouts/*"],
 			"@hooks/*": ["./src/hooks/*"],
+			"@queries/*": ["./src/hooks/queries/*"],
 			"@stores/*": ["./src/stores/*"],
 			"@lib/*": ["./src/lib/*"],
 			"@types/*": ["./src/types/*"],
@@ -39,5 +42,6 @@
 			"@assets/*": ["./src/assets/*"]
 		}
 	},
-	"include": ["src"]
+	"include": ["src/**/*", "src/**/*.tsx", "src/**/*.ts"],
+	"exclude": ["node_modules", "dist"]
 }

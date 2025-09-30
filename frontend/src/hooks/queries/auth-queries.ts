@@ -9,15 +9,15 @@ import type {
 	AuthResponse,
 } from "@types/auth"
 
-// Mutation para login
-export const useLoginMutation = () => {
+// Hook genérico para autenticação
+const useAuthMutation = (endpoint: string) => {
 	const { login } = useAuthStore()
 
 	return useMutation({
 		mutationFn: async (
-			credentials: LoginCredentials
+			credentials: LoginCredentials | RegisterCredentials
 		): Promise<{ data: AuthResponse; headers: any }> => {
-			const response = await api.post("/auth/sign_in", {
+			const response = await api.post(endpoint, {
 				user: credentials,
 			})
 			return {
@@ -26,12 +26,12 @@ export const useLoginMutation = () => {
 			}
 		},
 		onSuccess: ({ data, headers }) => {
-			console.log("🔍 Login response:", data)
+			console.log(`🔍 ${endpoint} response:`, data)
 			console.log("🔍 Response headers:", headers)
 
 			const authHeader = headers["authorization"] || headers["Authorization"]
 			const token = authHeader ? authHeader.replace("Bearer ", "") : null
-			const user = data.data || data.user
+			const user = data.data
 
 			console.log("🔍 Extracted:", { token, user })
 
@@ -43,51 +43,14 @@ export const useLoginMutation = () => {
 			}
 		},
 		onError: (error) => {
-			console.error("Login error:", error)
+			console.error(`${endpoint} error:`, error)
 		},
 	})
 }
 
-// Mutation para register
-export const useRegisterMutation = () => {
-	const { login } = useAuthStore()
+export const useLoginMutation = () => useAuthMutation("/auth/sign_in")
+export const useRegisterMutation = () => useAuthMutation("/auth/sign_up")
 
-	return useMutation({
-		mutationFn: async (
-			userData: RegisterCredentials
-		): Promise<{ data: AuthResponse; headers: any }> => {
-			const response = await api.post("/auth/sign_up", {
-				user: userData,
-			})
-			return {
-				data: response.data,
-				headers: response.headers,
-			}
-		},
-		onSuccess: ({ data, headers }) => {
-			console.log("🔍 Register response:", data)
-			console.log("🔍 Response headers:", headers)
-
-			const authHeader = headers["authorization"] || headers["Authorization"]
-			const token = authHeader ? authHeader.replace("Bearer ", "") : null
-			const user = data.data || data.user
-
-			console.log("🔍 Extracted:", { token, user })
-
-			if (token && user) {
-				login(user, token)
-				console.log("✅ Auth set via Zustand store")
-			} else {
-				console.error("❌ Missing token or user in response")
-			}
-		},
-		onError: (error) => {
-			console.error("Register error:", error)
-		},
-	})
-}
-
-// Mutation para logout
 export const useLogoutMutation = () => {
 	const navigate = useNavigate()
 	const { logout } = useAuthStore()
@@ -97,7 +60,7 @@ export const useLogoutMutation = () => {
 			try {
 				await api.delete("/auth/sign_out")
 			} catch (error) {
-				console.warn("Logout request failed, but clearing local auth")
+				console.warn("Logout request failed, but clearing local auth", error)
 			}
 		},
 		onSuccess: () => {

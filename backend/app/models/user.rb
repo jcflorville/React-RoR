@@ -4,7 +4,6 @@ class User < ApplicationRecord
          :jwt_authenticatable, jwt_revocation_strategy: self
 
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
-  validates :email, uniqueness: { case_sensitive: false }
 
   before_save :downcase_email
 

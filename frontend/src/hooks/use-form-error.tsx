@@ -8,7 +8,9 @@ export const useFormError = (error: any) => {
 		if (error.isAxiosError && error.response) {
 			const responseData = error.response.data
 
-			console.log("🔍 Backend response data:", responseData)
+			if (responseData?.errors && Array.isArray(responseData.errors)) {
+				return responseData.errors[0]
+			}
 
 			if (responseData?.message) {
 				return responseData.message
@@ -19,7 +21,6 @@ export const useFormError = (error: any) => {
 	}
 
 	const errorMessage = getErrorMessage()
-	console.log("🔍 Final error message:", errorMessage)
 
 	const ErrorComponent = error ? (
 		<Alert color='failure'>{errorMessage}</Alert>

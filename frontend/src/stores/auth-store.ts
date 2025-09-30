@@ -14,7 +14,7 @@ type AuthStore = AuthState & AuthActions
 
 export const useAuthStore = create<AuthStore>()(
 	persist(
-		(set, get) => ({
+		(set) => ({
 			// Estado inicial
 			user: null,
 			token: null,
