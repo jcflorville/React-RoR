@@ -10,7 +10,9 @@ class Tasks::Destroyer < BaseService
   end
 
   def call
-    find_task!
+    task_result = find_task!
+    return task_result if task_result&.failure?
+
     destroy_task
   end
 
@@ -22,6 +24,7 @@ class Tasks::Destroyer < BaseService
     @task = Task.joins(:project)
                 .where(projects: { user: user })
                 .find(task_id)
+    nil # Return nil if successful
   rescue ActiveRecord::RecordNotFound
     failure(message: 'Task not found')
   end

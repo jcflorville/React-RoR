@@ -10,7 +10,9 @@ class Comments::Creator < BaseService
   end
 
   def call
-    validate_task!
+    task_result = validate_task!
+    return task_result if task_result&.failure?
+
     create_comment
   end
 
@@ -22,6 +24,7 @@ class Comments::Creator < BaseService
     @task = Task.joins(:project)
                 .where(projects: { user: user })
                 .find(params[:task_id])
+    nil # Return nil if successful
   rescue ActiveRecord::RecordNotFound
     failure(message: 'Task not found')
   end

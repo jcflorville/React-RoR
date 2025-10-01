@@ -31,7 +31,10 @@ class Tasks::Updater < BaseService
   end
 
   def update_task
-    update_assignee if params[:user_id]
+    if params[:user_id]
+      assignee_result = update_assignee
+      return assignee_result if assignee_result&.failure?
+    end
 
     if @task.update(task_params)
       success(data: @task, message: 'Task updated successfully')
@@ -43,8 +46,9 @@ class Tasks::Updater < BaseService
   def update_assignee
     assignee = User.find(params[:user_id])
     @task.user = assignee
+    nil # Return nil if successful
   rescue ActiveRecord::RecordNotFound
-    # Continue without updating assignee if user not found
+    failure(message: 'Assignee not found')
   end
 
   def task_params
