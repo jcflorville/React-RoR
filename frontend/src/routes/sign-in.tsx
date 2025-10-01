@@ -1,6 +1,6 @@
 // frontend/src/routes/sign-in.tsx
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { AuthLayout } from "../components/layouts/AuthLayout"
+import { AuthLayout } from "@components/layouts/AuthLayout"
 import { Button, Label, TextInput, Checkbox } from "flowbite-react"
 import { useLoginForm } from "@hooks/use-auth-form"
 import { useFormError } from "@hooks/use-form-error"

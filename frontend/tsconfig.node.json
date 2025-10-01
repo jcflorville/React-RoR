@@ -1,15 +1,13 @@
 {
 	"compilerOptions": {
-		"types": ["node"],
-		"typeRoots": ["./node_modules/@types"],
 		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
 		"target": "ES2023",
 		"lib": ["ES2023"],
-		"module": "nodenext",
+		"module": "ESNext",
 		"skipLibCheck": true,
 
 		/* Bundler mode */
-		"moduleResolution": "nodenext",
+		"moduleResolution": "bundler",
 		"allowImportingTsExtensions": true,
 		"verbatimModuleSyntax": true,
 		"moduleDetection": "force",

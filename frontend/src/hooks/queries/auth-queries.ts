@@ -7,7 +7,7 @@ import type {
 	LoginCredentials,
 	RegisterCredentials,
 	AuthResponse,
-} from "@types/auth"
+} from "@/types/auth"
 
 // Hook genérico para autenticação
 const useAuthMutation = (endpoint: string) => {

@@ -1,7 +1,6 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router"
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router"
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
-
-// import appCss from "../styles/app.css?url"
+import type { RouterContext } from "@/types/router"
 
 const RootLayout = () => (
 	<>
@@ -10,13 +9,9 @@ const RootLayout = () => (
 	</>
 )
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<RouterContext>()({
 	head: () => ({
-		meta: [
-			// your meta tags and site config
-		],
-		// links: [{ rel: "stylesheet", href: appCss }],
-		// other head config
+		meta: [],
 	}),
 	component: RootLayout,
 })

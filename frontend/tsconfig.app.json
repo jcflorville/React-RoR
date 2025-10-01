@@ -12,8 +12,6 @@
 		"allowImportingTsExtensions": true,
 		"verbatimModuleSyntax": true,
 		"moduleDetection": "force",
-		"resolveJsonModule": true,
-		"isolatedModules": true,
 		"noEmit": true,
 		"jsx": "react-jsx",
 
@@ -42,6 +40,5 @@
 			"@assets/*": ["./src/assets/*"]
 		}
 	},
-	"include": ["src/**/*", "src/**/*.tsx", "src/**/*.ts"],
-	"exclude": ["node_modules", "dist"]
+	"include": ["src"]
 }

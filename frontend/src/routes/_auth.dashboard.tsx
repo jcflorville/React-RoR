@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { DashboardLayout } from "../components/layouts/DashboardLayout"
+import { DashboardLayout } from "@components/layouts/DashboardLayout"
 import { Card } from "flowbite-react"
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute("/_auth/dashboard")({
 	component: DashboardPage,
 })
 

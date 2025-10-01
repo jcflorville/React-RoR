@@ -1,7 +1,7 @@
 // frontend/src/hooks/queries/profile-queries.ts
 import { api } from "@lib/api"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import type { User } from "@types/auth"
+import type { User } from "@/types/auth"
 
 export const profileKeys = {
 	profile: () => ["profile"] as const,

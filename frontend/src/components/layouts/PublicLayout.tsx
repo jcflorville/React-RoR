@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
-import { AppHeader } from "./components/Header"
-import { AppFooter } from "./components/Footer"
+import { AppHeader } from "@components/layouts/components/Header"
+import { AppFooter } from "@components/layouts/components/Footer"
 
 interface PublicLayoutProps {
 	children: ReactNode
