@@ -26,6 +26,31 @@ Rails.application.routes.draw do
         # Endpoints privados
         scope module: :authenticated do
           resource :profiles, only: [ :show, :update ]
+
+          # Nested resources - tasks within projects
+          resources :projects do
+            resources :tasks, controller: 'projects/tasks', except: [ :index ] do
+              member do
+                patch :complete
+                patch :reopen
+              end
+            end
+          end
+
+          # Flat resources - for cross-project operations
+          resources :tasks do
+            collection do
+              get :mine # todas as tasks do usuário
+              get :overdue # tasks em atraso
+            end
+            member do
+              patch :complete
+              patch :reopen
+            end
+          end
+
+          resources :categories
+          resources :comments, except: [ :show ]
         end
       end
     end

@@ -9,7 +9,7 @@ class Api::V1::Auth::RegistrationsController < Devise::RegistrationsController
     if resource.persisted?
       render_auth_success(resource, 'Account created successfully')
     else
-      render_error('Registration failed', resource.errors.full_messages, :unprocessable_content)
+      render_error('Registration failed', resource.errors, :unprocessable_content)
     end
   end
 end
