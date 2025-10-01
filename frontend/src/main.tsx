@@ -4,6 +4,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router"
 import { ThemeProvider } from "flowbite-react"
 import { AppProviders } from "./providers/app-providers"
 import { useAuthStore } from "@stores/auth-store"
+import { LoadingScreen } from "@components/LoadingScreen"
 import type { RouterContext } from "@/types/router"
 
 import "./styles.css"
@@ -25,7 +26,12 @@ declare module "@tanstack/react-router" {
 
 // ✅ Componente App dentro do main.tsx
 function App() {
-	const { user, isAuthenticated, isLoading } = useAuthStore()
+	const { user, isAuthenticated, isLoading, isHydrated } = useAuthStore()
+
+	// ✅ Só mostra conteúdo quando estiver hidratado
+	if (!isHydrated || isLoading) {
+		return <LoadingScreen />
+	}
 
 	const routerContext: RouterContext = {
 		auth: {

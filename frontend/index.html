@@ -6,17 +6,26 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>React-RoR</title>
 		<script>
-			// Dark mode script to prevent flash of wrong theme
+			// Enhanced dark mode script to prevent flash of wrong theme
 			;(function () {
-				const theme = localStorage.getItem("flowbite-theme-mode") || "auto"
-				if (
-					theme === "dark" ||
-					(theme === "auto" &&
-						window.matchMedia("(prefers-color-scheme: dark)").matches)
-				) {
-					document.documentElement.classList.add("dark")
-				} else {
-					document.documentElement.classList.remove("dark")
+				try {
+					const theme = localStorage.getItem("flowbite-theme-mode") || "auto"
+					const isDark =
+						theme === "dark" ||
+						(theme === "auto" &&
+							window.matchMedia("(prefers-color-scheme: dark)").matches)
+
+					if (isDark) {
+						document.documentElement.classList.add("dark")
+						// Set initial background to prevent flash
+						document.documentElement.style.backgroundColor = "#111827"
+					} else {
+						document.documentElement.classList.remove("dark")
+						document.documentElement.style.backgroundColor = "#f9fafb"
+					}
+				} catch (e) {
+					// Fallback if localStorage is not available
+					console.warn("Could not access localStorage for theme")
 				}
 			})()
 		</script>

@@ -8,6 +8,7 @@ interface AuthActions {
 	setUser: (user: User) => void
 	setLoading: (loading: boolean) => void
 	clearAuth: () => void
+	setHydrated: () => void
 }
 
 type AuthStore = AuthState & AuthActions
@@ -19,7 +20,8 @@ export const useAuthStore = create<AuthStore>()(
 			user: null,
 			token: null,
 			isAuthenticated: false,
-			isLoading: false,
+			isLoading: true,
+			isHydrated: false,
 
 			// Ações
 			login: (user: User, token: string) => {
@@ -59,6 +61,10 @@ export const useAuthStore = create<AuthStore>()(
 					isLoading: false,
 				})
 			},
+
+			setHydrated: () => {
+				set({ isHydrated: true, isLoading: false })
+			},
 		}),
 		{
 			name: "auth-storage",
@@ -68,6 +74,11 @@ export const useAuthStore = create<AuthStore>()(
 				token: state.token,
 				isAuthenticated: state.isAuthenticated,
 			}),
+			onRehydrateStorage: () => (state) => {
+				if (state) {
+					state.setHydrated()
+				}
+			},
 		}
 	)
 )
