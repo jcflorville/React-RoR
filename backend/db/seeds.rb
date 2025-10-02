@@ -23,6 +23,13 @@ admin = User.find_or_create_by!(email: 'admin@test.com') do |user|
   user.password_confirmation = 'password123'
 end
 
+# Criar usuário principal para testes
+jc_user = User.find_or_create_by!(email: 'jcflorville@test.com') do |user|
+  user.name = 'JC Florville'
+  user.password = 'password123'
+  user.password_confirmation = 'password123'
+end
+
 users = []
 [ 'João Silva', 'Maria Santos', 'Carlos Oliveira', 'Ana Costa' ].each do |name|
   email = "#{name.downcase.gsub(' ', '.')}@test.com"
@@ -119,6 +126,91 @@ projects = projects_data.map do |proj_data|
 end
 
 puts "✅ #{Project.count} projetos criados"
+
+# 3.1. Criar 50+ projetos para jcflorville@test.com
+puts "🚀 Criando 50+ projetos para jcflorville@test.com..."
+
+project_names = [
+  'E-commerce Platform', 'Task Management System', 'Social Media Dashboard', 'CRM Application',
+  'Blog Platform', 'File Storage Service', 'Chat Application', 'Video Streaming Platform',
+  'Learning Management System', 'Invoice Generator', 'Inventory Management', 'HR Management System',
+  'Real Estate Platform', 'Food Delivery App', 'Fitness Tracker', 'Weather Dashboard',
+  'Music Streaming App', 'Photo Gallery', 'Event Management', 'Booking System',
+  'Analytics Dashboard', 'Content Management System', 'API Gateway', 'Microservices Architecture',
+  'Data Visualization Tool', 'Machine Learning Pipeline', 'IoT Device Manager', 'Blockchain Explorer',
+  'Mobile Banking App', 'Gaming Platform', 'News Aggregator', 'Email Marketing Tool',
+  'Customer Support Portal', 'Product Catalog', 'Subscription Manager', 'Survey Platform',
+  'Document Management', 'Password Manager', 'VPN Service', 'Cloud Storage',
+  'Code Repository', 'CI/CD Pipeline', 'Monitoring Service', 'Backup Solution',
+  'Calendar Application', 'Note Taking App', 'Expense Tracker', 'Time Tracking Tool',
+  'Portfolio Website', 'Landing Page Builder', 'SEO Analyzer', 'A/B Testing Platform',
+  'Notification Service', 'Search Engine', 'Map Application', 'Translation Service'
+]
+
+statuses = [ 'draft', 'active', 'completed', 'archived' ]
+priorities = [ 'low', 'medium', 'high', 'urgent' ]
+
+project_names.each_with_index do |name, index|
+  status = statuses.sample
+  priority = priorities.sample
+
+  start_date = case status
+  when 'completed' then rand(6..12).months.ago
+  when 'active' then rand(1..8).weeks.ago
+  when 'draft' then rand(1..4).weeks.from_now
+  else rand(3..10).months.ago
+  end
+
+  end_date = case status
+  when 'completed' then rand(1..4).weeks.ago
+  when 'active' then rand(2..12).weeks.from_now
+  when 'draft' then rand(2..6).months.from_now
+  else rand(1..8).weeks.from_now
+  end
+
+  project = Project.create!(
+    name: name,
+    description: "#{name} - Projeto #{index + 1} para desenvolvimento e testes de funcionalidades. Este projeto inclui funcionalidades modernas e integração com diversas tecnologias.",
+    status: status,
+    priority: priority,
+    start_date: start_date,
+    end_date: end_date,
+    user: jc_user
+  )
+
+  # Associar 1-3 categorias aleatórias
+  project_categories = categories.sample(rand(1..3))
+  project.categories = project_categories
+
+  # Criar 2-8 tarefas para cada projeto
+  rand(2..8).times do |task_index|
+    task_statuses = [ 'todo', 'in_progress', 'completed', 'blocked' ]
+    task_priorities = [ 'low', 'medium', 'high', 'urgent' ]
+
+    task_status = task_statuses.sample
+    task_priority = task_priorities.sample
+
+    due_date = case task_status
+    when 'completed' then rand(1..30).days.ago
+    when 'in_progress' then rand(1..14).days.from_now
+    when 'blocked' then rand(1..60).days.from_now
+    else rand(7..45).days.from_now
+    end
+
+    Task.create!(
+      title: "Task #{task_index + 1} - #{name}",
+      description: "Tarefa importante para o desenvolvimento do #{name}. Inclui implementação, testes e documentação.",
+      status: task_status,
+      priority: task_priority,
+      due_date: due_date,
+      completed_at: task_status == 'completed' ? rand(1..30).days.ago : nil,
+      project: project,
+      user: jc_user
+    )
+  end
+end
+
+puts "✅ #{Project.where(user: jc_user).count} projetos criados para jcflorville@test.com"
 
 # 4. Criar tarefas
 puts "📝 Criando tarefas..."
@@ -220,6 +312,11 @@ puts "   🏷️ Categorias: #{Category.count}"
 puts "   📋 Projetos: #{Project.count}"
 puts "   📝 Tarefas: #{Task.count}"
 puts "   💬 Comentários: #{Comment.count}"
-puts "\n🔑 Login de teste:"
-puts "   Email: admin@test.com"
-puts "   Senha: password123"
+puts "\n🔑 Logins de teste:"
+puts "   📧 admin@test.com (senha: password123)"
+puts "   📧 jcflorville@test.com (senha: password123) - #{Project.where(user: jc_user).count} projetos"
+puts "\n💡 O usuário jcflorville@test.com tem dados suficientes para testar:"
+puts "   • Pagination"
+puts "   • Infinite Scroll"
+puts "   • Filtros e ordenação"
+puts "   • Performance com muitos dados"

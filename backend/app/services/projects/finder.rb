@@ -29,7 +29,13 @@ class Projects::Finder < BaseService
   end
 
   def find_projects_collection
-    projects = user.projects.includes(:categories, :tasks)
+    projects = user.projects
+      .select('projects.*')
+      .select('COUNT(tasks.id) as tasks_count')
+      .select('COUNT(CASE WHEN tasks.status = 2 THEN 1 END) as completed_tasks_count')
+      .left_joins(:tasks)
+      .group('projects.id')
+      .includes(:categories)
     projects = apply_filters(projects)
     projects = apply_search(projects)
     projects = apply_ordering(projects)
@@ -38,8 +44,8 @@ class Projects::Finder < BaseService
   end
 
   def apply_filters(projects)
-    projects = projects.where(status: params[:status]) if params[:status].present?
-    projects = projects.where(priority: params[:priority]) if params[:priority].present?
+    projects = projects.by_status(params[:status]) if params[:status].present?
+    projects = projects.by_priority(params[:priority]) if params[:priority].present?
 
     if params[:category_id].present?
       projects = projects.joins(:categories).where(categories: { id: params[:category_id] })
@@ -49,7 +55,7 @@ class Projects::Finder < BaseService
   end
 
   def apply_search(projects)
-    return projects unless params[:search].present?
+    return projects if params[:search].blank?
 
     projects.search_by_content(params[:search])
   end

@@ -29,8 +29,8 @@ class Project < ApplicationRecord
   before_validation :set_defaults, on: :create
 
   def progress_percentage
-    return 0 if tasks.empty?
-    (tasks.completed.count.to_f / tasks.count * 100).round(2)
+    return 0 if tasks_count == 0
+    (completed_tasks_count.to_f / tasks_count * 100).round(2)
   end
 
   def overdue?
