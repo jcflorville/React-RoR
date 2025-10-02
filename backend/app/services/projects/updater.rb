@@ -43,6 +43,6 @@ class Projects::Updater < BaseService
   end
 
   def project_params
-    params.slice(:name, :description, :status, :priority).compact
+    params.slice(:name, :description, :status, :priority, :start_date, :end_date).compact
   end
 end
