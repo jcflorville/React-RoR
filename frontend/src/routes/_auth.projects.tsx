@@ -3,6 +3,7 @@ import { DashboardLayout } from "@components/layouts/DashboardLayout"
 import { Header } from "@/components/projects/Header"
 import { Filters } from "@/components/projects/Filters"
 import { List } from "@/components/projects/List"
+import { ViewModal } from "@/components/projects/modals/ViewModal"
 import { type Project } from "@/lib/api/types/project"
 import { useState, useMemo } from "react"
 import { useProjects, useDeleteProject } from "@/hooks/queries/projects-queries"
@@ -16,6 +17,12 @@ function ProjectsPage() {
 	const [statusFilter, setStatusFilter] = useState<string>("")
 	const [priorityFilter, setPriorityFilter] = useState<string>("")
 	const [sortBy, setSortBy] = useState<string>("name")
+
+	// Estados do Modal
+	const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
+		null
+	)
+	const [isViewModalOpen, setIsViewModalOpen] = useState(false)
 
 	// Função para mapear sortBy para os valores que o backend espera
 	const mapSortValue = (
@@ -63,10 +70,6 @@ function ProjectsPage() {
 		console.log("Criar projeto")
 	}
 
-	const handleEditProject = (project: Project) => {
-		console.log("Editar projeto:", project.id)
-	}
-
 	const handleDeleteProject = async (project: Project) => {
 		if (
 			window.confirm(
@@ -82,7 +85,27 @@ function ProjectsPage() {
 	}
 
 	const handleViewProject = (project: Project) => {
-		console.log("Ver projeto:", project.id)
+		setSelectedProjectId(project.id)
+		setIsViewModalOpen(true)
+	}
+
+	const handleCloseModal = () => {
+		setIsViewModalOpen(false)
+		setSelectedProjectId(null)
+	}
+
+	const handleEditProject = (project: Project) => {
+		// TODO: Navegar para página de edição
+		console.log("Editar projeto:", project.id)
+		// Fechar modal por enquanto
+		handleCloseModal()
+	}
+
+	const handleEditFromModal = (projectId: number) => {
+		// TODO: Navegar para página de edição
+		console.log("Editar projeto:", projectId)
+		// Fechar modal por enquanto
+		handleCloseModal()
 	}
 
 	// Error state
@@ -145,34 +168,44 @@ function ProjectsPage() {
 	}
 
 	return (
-		<DashboardLayout>
-			<div className='space-y-6'>
-				{/* Header */}
-				<Header
-					searchTerm={searchTerm}
-					onSearchChange={setSearchTerm}
-					onCreateProject={handleCreateProject}
-				/>
+		<>
+			<DashboardLayout>
+				<div className='space-y-6'>
+					{/* Header */}
+					<Header
+						searchTerm={searchTerm}
+						onSearchChange={setSearchTerm}
+						onCreateProject={handleCreateProject}
+					/>
 
-				{/* Filters */}
-				<Filters
-					status={statusFilter}
-					priority={priorityFilter}
-					sortBy={sortBy}
-					onStatusChange={setStatusFilter}
-					onPriorityChange={setPriorityFilter}
-					onSortChange={setSortBy}
-				/>
+					{/* Filters */}
+					<Filters
+						status={statusFilter}
+						priority={priorityFilter}
+						sortBy={sortBy}
+						onStatusChange={setStatusFilter}
+						onPriorityChange={setPriorityFilter}
+						onSortChange={setSortBy}
+					/>
 
-				{/* Projects List */}
-				<List
-					projects={projects}
-					loading={isLoading}
-					onEditProject={handleEditProject}
-					onDeleteProject={handleDeleteProject}
-					onViewProject={handleViewProject}
-				/>
-			</div>
-		</DashboardLayout>
+					{/* Projects List */}
+					<List
+						projects={projects}
+						loading={isLoading}
+						onEditProject={handleEditProject}
+						onDeleteProject={handleDeleteProject}
+						onViewProject={handleViewProject}
+					/>
+				</div>
+			</DashboardLayout>
+
+			{/* Modal */}
+			<ViewModal
+				isOpen={isViewModalOpen}
+				onClose={handleCloseModal}
+				projectId={selectedProjectId}
+				onEdit={handleEditFromModal}
+			/>
+		</>
 	)
 }

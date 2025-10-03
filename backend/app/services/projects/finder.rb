@@ -29,13 +29,7 @@ class Projects::Finder < BaseService
   end
 
   def find_projects_collection
-    projects = user.projects
-      .select('projects.*')
-      .select('COUNT(tasks.id) as tasks_count')
-      .select('COUNT(CASE WHEN tasks.status = 2 THEN 1 END) as completed_tasks_count')
-      .left_joins(:tasks)
-      .group('projects.id')
-      .includes(:categories)
+    projects = user.projects.includes(:categories)
     projects = apply_filters(projects)
     projects = apply_search(projects)
     projects = apply_ordering(projects)

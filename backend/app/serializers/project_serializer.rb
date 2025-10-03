@@ -1,10 +1,9 @@
 class ProjectSerializer < ApplicationSerializer
   attributes :id, :name, :description, :status, :priority, :start_date, :end_date, :created_at, :updated_at
 
-  # Relacionamentos (comentados temporariamente para debug)
-  # belongs_to :user, serializer: :user
-  # has_many :tasks, serializer: :task
-  # has_many :categories, serializer: :category
+  # Relacionamentos
+  has_many :tasks, serializer: :task
+  has_many :categories, serializer: :category
 
   # Atributos computados
   attribute :progress_percentage do |object|

@@ -58,6 +58,24 @@ export const useProject = (
 	})
 }
 
+/**
+ * Hook para buscar projeto específico no modal
+ * Separado do useProject para diferentes necessidades de cache e otimização
+ */
+export const useModalProject = (
+	id: number | null,
+	options?: Partial<UseQueryOptions<SingleProjectResponse>>
+) => {
+	return useQuery({
+		queryKey: [...projectsKeys.detail(id!), "modal"], // Cache separado com suffix 'modal'
+		queryFn: () => projectsApi.getById(id!),
+		enabled: !!id, // Só executa se id existir
+		staleTime: 2 * 60 * 1000, // 2 minutos (mais agressivo que useProject)
+		retry: 1, // Menos retry para modal (UX mais rápida)
+		...options,
+	})
+}
+
 // ================================
 // MUTATIONS (Modificação de dados)
 // ================================
