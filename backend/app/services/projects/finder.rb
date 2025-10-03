@@ -29,7 +29,7 @@ class Projects::Finder < BaseService
   end
 
   def find_projects_collection
-    projects = user.projects.includes(:categories)
+    projects = user.projects.includes(:tasks, :categories)
     projects = apply_filters(projects)
     projects = apply_search(projects)
     projects = apply_ordering(projects)

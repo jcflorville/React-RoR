@@ -73,8 +73,20 @@ module ApiResponse
   end
 
   def serialize_resource(resource, serializer_class)
-    serializer_class.new(resource).serializable_hash[:data][:attributes]
+  # Detectar quais relationships estão carregadas
+  include_options = detect_loaded_relationships(resource)
+
+  # Serializar com include para popular o array 'included'
+  serialized = serializer_class.new(resource, include: include_options).serializable_hash
+  data = serialized[:data][:attributes]
+
+  # Se tem relationships carregadas, inclui
+  if has_loaded_relationships?(serialized)
+    data.merge!(flatten_relationships(serialized))
   end
+
+  data
+end
 
   def serialize_collection(collection, serializer_class)
     serializer_class.new(collection).serializable_hash[:data].map { |item| item[:attributes] }
@@ -117,5 +129,43 @@ module ApiResponse
     "#{model_name}Serializer".constantize
   rescue NameError
     nil
+  end
+
+  def has_loaded_relationships?(serialized_data)
+    relationships = serialized_data[:data][:relationships]
+    relationships.present? && relationships.any? { |_, rel| rel[:data].present? }
+  end
+
+  def detect_loaded_relationships(resource)
+    relationships = []
+
+    # Lista manual das relationships que você quer incluir
+    potential_relationships = [ :tasks, :categories, :comments ] # adicione conforme necessário
+
+    potential_relationships.each do |rel_name|
+      if resource.class.reflect_on_association(rel_name) &&
+        resource.association(rel_name).loaded?
+        relationships << rel_name
+      end
+    end
+
+    relationships
+  end
+
+  def flatten_relationships(serialized_data)
+    relationships = serialized_data[:data][:relationships]
+    included = serialized_data[:included] || []
+
+    relationships.transform_values do |rel|
+      rel[:data].map do |ref|
+        # Buscar o item completo no included usando id e type
+        included_item = included.find { |item|
+          item[:id].to_s == ref[:id].to_s && item[:type] == ref[:type]
+        }
+
+        # Se encontrou no included, usar os attributes, senão manter a referência
+        included_item ? included_item[:attributes] : ref
+      end
+    end
   end
 end
