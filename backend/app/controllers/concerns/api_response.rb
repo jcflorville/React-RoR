@@ -1,5 +1,7 @@
 module ApiResponse
   extend ActiveSupport::Concern
+  include ApiSerialization
+  include ApiPagination
 
   private
 
@@ -23,17 +25,6 @@ module ApiResponse
     render json: response_hash, status: status
   end
 
-  def render_pagination(collection, serializer_class = nil)
-    serializer = serializer_class || infer_serializer(collection)
-
-    render json: {
-      success: true,
-      data: serializer ? serialize_collection(collection, serializer) : collection,
-      meta: pagination_meta(collection)
-    }
-  end
-
-  # Para respostas de autenticação
   def render_auth_success(user, message = 'Authentication successful')
     return render_error('User not found', nil, :unauthorized) if user.nil?
 
@@ -43,54 +34,11 @@ module ApiResponse
     )
   end
 
-  # Para logout
   def render_logout_success
     render_success(nil, nil, :no_content)
   end
 
-  def serialize_data(data)
-    return nil if data.nil?
-
-    case data
-    when ActiveRecord::Base, ActiveRecord::Relation
-      # Auto-detect serializer for ActiveRecord objects
-      serializer_class = infer_serializer_for_model(data)
-      if serializer_class
-        if data.respond_to?(:each) # Collection
-          serialize_collection(data, serializer_class)
-        else # Single resource
-          serialize_resource(data, serializer_class)
-        end
-      else
-        data
-      end
-    when JSONAPI::Serializer
-      # Already a serializer instance
-      data.serializable_hash[:data]
-    else
-      data
-    end
-  end
-
-  def serialize_resource(resource, serializer_class)
-  # Detectar quais relationships estão carregadas
-  include_options = detect_loaded_relationships(resource)
-
-  # Serializar com include para popular o array 'included'
-  serialized = serializer_class.new(resource, include: include_options).serializable_hash
-  data = serialized[:data][:attributes]
-
-  # Se tem relationships carregadas, inclui
-  if has_loaded_relationships?(serialized)
-    data.merge!(flatten_relationships(serialized))
-  end
-
-  data
-end
-
-  def serialize_collection(collection, serializer_class)
-    serializer_class.new(collection).serializable_hash[:data].map { |item| item[:attributes] }
-  end
+  private
 
   def format_errors(errors)
     case errors
@@ -102,70 +50,6 @@ end
       errors
     else
       [ errors.to_s ]
-    end
-  end
-
-  def pagination_meta(collection)
-    {
-      current_page: collection.respond_to?(:current_page) ? collection.current_page : 1,
-      per_page: collection.respond_to?(:limit_value) ? collection.limit_value : collection.size,
-      total_pages: collection.respond_to?(:total_pages) ? collection.total_pages : 1,
-      total_count: collection.respond_to?(:total_count) ? collection.total_count : collection.size
-    }
-  end
-
-  def infer_serializer_for_model(data)
-    model_class = data.respond_to?(:klass) ? data.klass : data.class
-    model_name = model_class.name
-    "#{model_name}Serializer".constantize
-  rescue NameError
-    nil
-  end
-
-  def infer_serializer(collection)
-    return nil if collection.empty?
-
-    model_name = collection.first.class.name
-    "#{model_name}Serializer".constantize
-  rescue NameError
-    nil
-  end
-
-  def has_loaded_relationships?(serialized_data)
-    relationships = serialized_data[:data][:relationships]
-    relationships.present? && relationships.any? { |_, rel| rel[:data].present? }
-  end
-
-  def detect_loaded_relationships(resource)
-    relationships = []
-
-    # Lista manual das relationships que você quer incluir
-    potential_relationships = [ :tasks, :categories, :comments ] # adicione conforme necessário
-
-    potential_relationships.each do |rel_name|
-      if resource.class.reflect_on_association(rel_name) &&
-        resource.association(rel_name).loaded?
-        relationships << rel_name
-      end
-    end
-
-    relationships
-  end
-
-  def flatten_relationships(serialized_data)
-    relationships = serialized_data[:data][:relationships]
-    included = serialized_data[:included] || []
-
-    relationships.transform_values do |rel|
-      rel[:data].map do |ref|
-        # Buscar o item completo no included usando id e type
-        included_item = included.find { |item|
-          item[:id].to_s == ref[:id].to_s && item[:type] == ref[:type]
-        }
-
-        # Se encontrou no included, usar os attributes, senão manter a referência
-        included_item ? included_item[:attributes] : ref
-      end
     end
   end
 end

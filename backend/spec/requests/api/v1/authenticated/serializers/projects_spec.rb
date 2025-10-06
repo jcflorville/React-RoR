@@ -87,7 +87,7 @@ RSpec.describe 'Projects API Serialization', type: :request do
     let!(:task1) { create(:task, project: project, title: 'Show Task 1', status: 'todo') }
     let!(:task2) { create(:task, project: project, title: 'Show Task 2', status: 'completed') }
 
-    before { get "/api/v1/projects/#{project.id}", headers: auth_headers(user) }
+    before { get "/api/v1/projects/#{project.id}?include=tasks,categories", headers: auth_headers(user) }
 
     context 'response structure' do
       it 'returns success response format' do

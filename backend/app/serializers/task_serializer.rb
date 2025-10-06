@@ -14,12 +14,4 @@ class TaskSerializer < ApplicationSerializer
   attribute :days_until_due do |object|
     object.days_until_due
   end
-
-  attribute :status_humanized do |object|
-    object.status.humanize
-  end
-
-  attribute :priority_humanized do |object|
-    object.priority.humanize
-  end
 end
