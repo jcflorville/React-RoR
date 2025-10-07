@@ -22,14 +22,19 @@ class Projects::Finder < BaseService
   attr_reader :user, :params
 
   def find_single_project
-    project = user.projects.includes(:tasks, :categories).find(params[:id])
+    # Eager load with nested associations to prevent N+1 queries
+    # Supports: ?include=tasks.comments,categories
+    project = user.projects
+      .includes(tasks: [ :comments, :user ], categories: [])
+      .find(params[:id])
     success(data: project)
   rescue ActiveRecord::RecordNotFound
     failure(message: 'Project not found')
   end
 
   def find_projects_collection
-    projects = user.projects.includes(:tasks, :categories)
+    # Eager load with nested associations
+    projects = user.projects.includes(tasks: [ :comments, :user ], categories: [])
     projects = apply_filters(projects)
     projects = apply_search(projects)
     projects = apply_ordering(projects)

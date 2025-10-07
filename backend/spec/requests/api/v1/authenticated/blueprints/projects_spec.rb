@@ -137,52 +137,52 @@ RSpec.describe 'ProjectBlueprint Serialization', type: :request do
           )
         end
       end
-    end
 
-    context 'tasks serialization in show action' do
-      it 'includes tasks in the response' do
-        project_data = json_response['data']
+      context 'tasks serialization in show action' do
+        it 'includes tasks in the response' do
+          project_data = json_response['data']
 
-        expect(project_data).to have_key('tasks')
-        expect(project_data['tasks']).to be_an(Array)
+          expect(project_data).to have_key('tasks')
+          expect(project_data['tasks']).to be_an(Array)
+        end
+
+        it 'includes all project tasks' do
+          project_data = json_response['data']
+          tasks_data = project_data['tasks']
+
+          expect(tasks_data.size).to eq(2)
+        end
+
+        it 'includes correct task data for show action' do
+          project_data = json_response['data']
+          tasks_data = project_data['tasks']
+          task_titles = tasks_data.map { |t| t['title'] }
+
+          expect(task_titles).to match_array([ 'Show Task 1', 'Show Task 2' ])
+        end
       end
 
-      it 'includes all project tasks' do
-        project_data = json_response['data']
-        tasks_data = project_data['tasks']
+      context 'categories serialization in show action' do
+        it 'includes categories in the response' do
+          project_data = json_response['data']
 
-        expect(tasks_data.size).to eq(2)
-      end
+          expect(project_data).to have_key('categories')
+          expect(project_data['categories']).to be_an(Array)
+        end
 
-      it 'includes correct task data for show action' do
-        project_data = json_response['data']
-        tasks_data = project_data['tasks']
-        task_titles = tasks_data.map { |t| t['title'] }
+        it 'includes all project categories' do
+          project_data = json_response['data']
+          categories_data = project_data['categories']
 
-        expect(task_titles).to match_array([ 'Show Task 1', 'Show Task 2' ])
-      end
-    end
+          expect(categories_data.size).to eq(1)
+        end
 
-    context 'categories serialization in show action' do
-      it 'includes categories in the response' do
-        project_data = json_response['data']
+        it 'includes correct category data for show action' do
+          project_data = json_response['data']
+          categories_data = project_data['categories']
 
-        expect(project_data).to have_key('categories')
-        expect(project_data['categories']).to be_an(Array)
-      end
-
-      it 'includes all project categories' do
-        project_data = json_response['data']
-        categories_data = project_data['categories']
-
-        expect(categories_data.size).to eq(1)
-      end
-
-      it 'includes correct category data for show action' do
-        project_data = json_response['data']
-        categories_data = project_data['categories']
-
-        expect(categories_data.first['name']).to eq('Frontend')
+          expect(categories_data.first['name']).to eq('Frontend')
+        end
       end
     end
   end

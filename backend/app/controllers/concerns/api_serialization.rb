@@ -40,6 +40,11 @@ module ApiSerialization
 
   def parse_include_params(include_param)
     return [] if include_param.blank?
-    include_param.split(',').map(&:strip).map(&:to_sym)
+
+    # Split by comma, then by dot for nested includes
+    # 'tasks.comments,categories' → [:tasks, :comments, :categories]
+    include_param.split(',').flat_map do |inc|
+      inc.strip.split('.').map(&:to_sym)
+    end.uniq
   end
 end
