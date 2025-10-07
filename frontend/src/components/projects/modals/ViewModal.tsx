@@ -109,18 +109,22 @@ export function ViewModal({
 				{isLoading ? (
 					<div className='flex items-center justify-center py-8'>
 						<Spinner size='xl' />
-						<span className='ml-3 text-gray-100'>Carregando projeto...</span>
+						<span className='ml-3 text-gray-900 dark:text-gray-100'>
+							Carregando projeto...
+						</span>
 					</div>
 				) : error ? (
 					<div className='text-center py-8'>
-						<p className='text-red-400 mb-4'>Erro ao carregar projeto</p>
+						<p className='text-red-600 dark:text-red-400 mb-4'>
+							Erro ao carregar projeto
+						</p>
 					</div>
 				) : project ? (
 					<div className='space-y-6 '>
 						{/* Status e Prioridade */}
 						<div className='flex flex-wrap gap-4'>
 							<div>
-								<span className='text-sm font-medium text-gray-300 block mb-1'>
+								<span className='text-sm font-medium text-gray-600 dark:text-gray-300 block mb-1'>
 									Status
 								</span>
 								<Badge color={getStatusColor(project.status)}>
@@ -128,7 +132,7 @@ export function ViewModal({
 								</Badge>
 							</div>
 							<div>
-								<span className='text-sm font-medium text-gray-300 block mb-1'>
+								<span className='text-sm font-medium text-gray-600 dark:text-gray-300 block mb-1'>
 									Prioridade
 								</span>
 								<Badge color={getPriorityColor(project.priority)}>
@@ -140,7 +144,7 @@ export function ViewModal({
 						{/* Progresso */}
 						{project.tasks && project.tasks.length > 0 && (
 							<div>
-								<h4 className='text-lg font-medium mb-3 text-gray-100'>
+								<h4 className='text-lg font-medium mb-3 text-gray-900 dark:text-gray-100'>
 									Progresso do Projeto
 								</h4>
 								{(() => {
@@ -148,15 +152,15 @@ export function ViewModal({
 									return (
 										<div className='space-y-3'>
 											<div className='flex items-center justify-between'>
-												<span className='text-sm text-gray-300'>
+												<span className='text-sm text-gray-600 dark:text-gray-300'>
 													{stats.completed} de {stats.total} tarefas concluídas
 												</span>
-												<span className='text-sm font-medium text-gray-100'>
+												<span className='text-sm font-medium text-gray-900 dark:text-gray-100'>
 													{stats.progress}%
 												</span>
 											</div>
 											<Progress progress={stats.progress} color='blue' />
-											<div className='grid grid-cols-2 gap-4 text-sm text-gray-300'>
+											<div className='grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-300'>
 												<div className='flex justify-between'>
 													<span>✅ Concluídas:</span>
 													<span>{stats.completed}</span>
@@ -181,8 +185,10 @@ export function ViewModal({
 						)}
 
 						{/* Datas */}
-						<div className='text-base leading-relaxed text-gray-300 rounded-2xl border border-gray-600 p-4 shadow-md bg-gray-800/50'>
-							<h4 className='mb-3 text-gray-100 font-medium'>Datas</h4>
+						<div className='text-base leading-relaxed text-gray-600 dark:text-gray-300 rounded-2xl border border-gray-200 dark:border-gray-600 p-4 shadow-md bg-gray-50 dark:bg-gray-800/50'>
+							<h4 className='mb-3 text-gray-900 dark:text-gray-100 font-medium'>
+								Datas
+							</h4>
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-3 text-sm'>
 								<div className='flex justify-between'>
 									<span>Criado em:</span>
@@ -210,7 +216,7 @@ export function ViewModal({
 						{/* Categorias */}
 						{project.categories && project.categories.length > 0 && (
 							<div>
-								<div className='text-lg font-medium mb-3 text-gray-100'>
+								<div className='text-lg font-medium mb-3 text-gray-900 dark:text-gray-100'>
 									Categorias
 								</div>
 								<div className='flex flex-wrap gap-2'>
@@ -232,8 +238,8 @@ export function ViewModal({
 
 						{/* Descrição */}
 						{project.description && (
-							<div className='text-base leading-relaxed text-gray-300 rounded-2xl border border-gray-600 p-4 shadow-md bg-gray-800/50'>
-								<div className='text-lg font-medium mb-3 text-gray-100'>
+							<div className='text-base leading-relaxed text-gray-600 dark:text-gray-300 rounded-2xl border border-gray-200 dark:border-gray-600 p-4 shadow-md bg-gray-50 dark:bg-gray-800/50'>
+								<div className='text-lg font-medium mb-3 text-gray-900 dark:text-gray-100'>
 									Descrição
 								</div>
 								<p className='whitespace-pre-wrap'>{project.description}</p>
@@ -242,7 +248,9 @@ export function ViewModal({
 					</div>
 				) : (
 					<div className='text-center py-8'>
-						<p className='text-gray-300'>Projeto não encontrado</p>
+						<p className='text-gray-600 dark:text-gray-300'>
+							Projeto não encontrado
+						</p>
 					</div>
 				)}
 			</ModalBody>
