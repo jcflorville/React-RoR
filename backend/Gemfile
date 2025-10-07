@@ -40,7 +40,7 @@ gem 'devise'
 gem 'devise-jwt'
 
 # Serialization
-gem 'jsonapi-serializer'
+gem 'blueprinter'
 
 # Search
 gem 'pg_search'

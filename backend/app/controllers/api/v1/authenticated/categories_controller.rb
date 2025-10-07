@@ -1,10 +1,10 @@
 class Api::V1::Authenticated::CategoriesController < Api::V1::Authenticated::BaseController
   def index
-    result = Categories::Finder.call(user: current_user, params: filter_params)
+    result = Categories::Finder.call(params: filter_params)
 
     if result.success?
       render_success(
-        serialize_collection(result.data, CategorySerializer),
+        serialize_data(result.data),
         result.message
       )
     else
@@ -13,11 +13,11 @@ class Api::V1::Authenticated::CategoriesController < Api::V1::Authenticated::Bas
   end
 
   def show
-    result = Categories::Finder.call(user: current_user, params: { id: params[:id] })
+    result = Categories::Finder.call(params: { id: params[:id] })
 
     if result.success?
       render_success(
-        serialize_resource(result.data, CategorySerializer),
+        serialize_data(result.data),
         result.message
       )
     else
@@ -26,11 +26,11 @@ class Api::V1::Authenticated::CategoriesController < Api::V1::Authenticated::Bas
   end
 
   def create
-    result = Categories::Creator.call(user: current_user, params: category_params)
+    result = Categories::Creator.call(params: category_params)
 
     if result.success?
       render_success(
-        serialize_resource(result.data, CategorySerializer),
+        serialize_data(result.data),
         result.message,
         :created
       )
@@ -44,7 +44,7 @@ class Api::V1::Authenticated::CategoriesController < Api::V1::Authenticated::Bas
 
     if result.success?
       render_success(
-        serialize_resource(result.data, CategorySerializer),
+        serialize_data(result.data),
         result.message
       )
     else
@@ -70,14 +70,5 @@ class Api::V1::Authenticated::CategoriesController < Api::V1::Authenticated::Bas
 
   def filter_params
     params.permit(:search, :sort)
-  end
-
-  # Helper methods para serialização
-  def serialize_resource(resource, serializer)
-    serializer.new(resource).serializable_hash[:data][:attributes]
-  end
-
-  def serialize_collection(collection, serializer)
-    serializer.new(collection).serializable_hash[:data].map { |item| item[:attributes] }
   end
 end

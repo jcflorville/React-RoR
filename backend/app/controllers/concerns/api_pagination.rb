@@ -3,12 +3,10 @@ module ApiPagination
 
   private
 
-  def render_pagination(collection, serializer_class = nil)
-    serializer = serializer_class || infer_serializer_for_model(collection)
-
+  def render_pagination(collection, blueprint_class = nil)
     render json: {
       success: true,
-      data: serializer ? serialize_collection(collection, serializer) : collection,
+      data: serialize_data(collection, blueprint: blueprint_class),
       meta: pagination_meta(collection)
     }
   end

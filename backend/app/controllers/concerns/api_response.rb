@@ -5,10 +5,10 @@ module ApiResponse
 
   private
 
-  def render_success(data = nil, message = nil, status = :ok)
+  def render_success(data = nil, message = nil, status = :ok, blueprint: nil)
     response_hash = {
       success: true,
-      data: serialize_data(data)
+      data: serialize_data(data, blueprint: blueprint)
     }
     response_hash[:message] = message if message.present?
 
@@ -29,8 +29,9 @@ module ApiResponse
     return render_error('User not found', nil, :unauthorized) if user.nil?
 
     render_success(
-      UserSerializer.new(user).serializable_hash[:data][:attributes],
-      message
+      user,
+      message,
+      blueprint: UserBlueprint
     )
   end
 

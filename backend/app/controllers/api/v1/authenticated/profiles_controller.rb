@@ -6,15 +6,18 @@ class Api::V1::Authenticated::ProfilesController < Api::V1::Authenticated::BaseC
 
   def show
     render_success(
-      UserSerializer.new(current_user).serializable_hash[:data][:attributes]
+      current_user,
+      'Profile fetched successfully',
+      blueprint: UserBlueprint
     )
   end
 
   def update
     if current_user.update(user_params)
       render_success(
-        UserSerializer.new(current_user).serializable_hash[:data][:attributes],
-        'Profile updated successfully'
+        current_user,
+        'Profile updated successfully',
+        blueprint: UserBlueprint
       )
     else
       render_error(

@@ -4,7 +4,7 @@ class Api::V1::Authenticated::CommentsController < Api::V1::Authenticated::BaseC
 
     if result.success?
       render_success(
-        serialize_collection(result.data, CommentSerializer),
+        serialize_data(result.data),
         result.message
       )
     else
@@ -17,7 +17,7 @@ class Api::V1::Authenticated::CommentsController < Api::V1::Authenticated::BaseC
 
     if result.success?
       render_success(
-        serialize_resource(result.data, CommentSerializer),
+        serialize_data(result.data),
         result.message,
         :created
       )
@@ -31,7 +31,7 @@ class Api::V1::Authenticated::CommentsController < Api::V1::Authenticated::BaseC
 
     if result.success?
       render_success(
-        serialize_resource(result.data, CommentSerializer),
+        serialize_data(result.data),
         result.message
       )
     else
@@ -57,14 +57,5 @@ class Api::V1::Authenticated::CommentsController < Api::V1::Authenticated::BaseC
 
   def filter_params
     params.permit(:search, :task_id, :project_id, :sort)
-  end
-
-  # Helper methods para serialização
-  def serialize_resource(resource, serializer)
-    serializer.new(resource).serializable_hash[:data][:attributes]
-  end
-
-  def serialize_collection(collection, serializer)
-    serializer.new(collection).serializable_hash[:data].map { |item| item[:attributes] }
   end
 end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Projects API Serialization', type: :request do
+RSpec.describe 'ProjectBlueprint Serialization', type: :request do
   let(:user) { create(:user) }
   let(:category1) { create(:category, name: 'Frontend') }
   let(:category2) { create(:category, name: 'Backend') }
@@ -87,9 +87,9 @@ RSpec.describe 'Projects API Serialization', type: :request do
     let!(:task1) { create(:task, project: project, title: 'Show Task 1', status: 'todo') }
     let!(:task2) { create(:task, project: project, title: 'Show Task 2', status: 'completed') }
 
-    before { get "/api/v1/projects/#{project.id}?include=tasks,categories", headers: auth_headers(user) }
+    context 'without include parameters' do
+      before { get "/api/v1/projects/#{project.id}", headers: auth_headers(user) }
 
-    context 'response structure' do
       it 'returns success response format' do
         expect(response).to have_http_status(:success)
         expect_json_success
@@ -106,6 +106,36 @@ RSpec.describe 'Projects API Serialization', type: :request do
           'status' => 'draft',
           'priority' => 'medium'
         )
+      end
+
+      it 'does not include tasks or categories by default' do
+        project_data = json_response['data']
+        expect(project_data).not_to have_key('tasks')
+        expect(project_data).not_to have_key('categories')
+      end
+    end
+
+    context 'with include parameters' do
+      before { get "/api/v1/projects/#{project.id}?include=tasks,categories", headers: auth_headers(user) }
+
+      context 'response structure' do
+        it 'returns success response format' do
+          expect(response).to have_http_status(:success)
+          expect_json_success
+          expect(json_response['data']).to be_a(Hash)
+        end
+
+        it 'includes project basic attributes' do
+          project_data = json_response['data']
+
+          expect(project_data).to include(
+            'id' => project.id,
+            'name' => 'Single Project',
+            'description' => 'A single project test',
+            'status' => 'draft',
+            'priority' => 'medium'
+          )
+        end
       end
     end
 

@@ -78,6 +78,7 @@ GEM
     bcrypt_pbkdf (1.1.1)
     benchmark (0.4.1)
     bigdecimal (3.2.3)
+    blueprinter (1.2.1)
     bootsnap (1.18.6)
       msgpack (~> 1.2)
     brakeman (7.1.0)
@@ -137,8 +138,6 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.13.2)
-    jsonapi-serializer (2.2.0)
-      activesupport (>= 4.2)
     jwt (3.1.2)
       base64
     kamal (2.7.0)
@@ -361,6 +360,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  blueprinter
   bootsnap
   brakeman
   debug
@@ -368,7 +368,6 @@ DEPENDENCIES
   devise-jwt
   factory_bot_rails
   faker
-  jsonapi-serializer
   kamal
   pg (~> 1.1)
   pg_search

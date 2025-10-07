@@ -28,7 +28,7 @@ export const projectsApi = {
 
 	// GET /api/v1/projects/:id - Buscar projeto específico
 	getById: async (id: number): Promise<SingleProjectResponse> => {
-		const response = await api.get(`/projects/${id}`)
+		const response = await api.get(`/projects/${id}?include=tasks,categories`)
 		return response.data
 	},
 

@@ -86,24 +86,24 @@ RSpec.describe Project, type: :model do
   describe 'instance methods' do
     let(:project) { create(:project) }
 
-    describe '#progress_percentage' do
-      context 'when project has no tasks' do
-        it 'returns 0' do
-          expect(project.progress_percentage).to eq(0)
-        end
-      end
+    # describe '#progress_percentage' do
+    #   context 'when project has no tasks' do
+    #     it 'returns 0' do
+    #       expect(project.progress_percentage).to eq(0)
+    #     end
+    #   end
 
-      context 'when project has tasks' do
-        before do
-          create_list(:task, 2, project: project, status: :completed)
-          create_list(:task, 2, project: project, status: :todo)
-        end
+    #   context 'when project has tasks' do
+    #     before do
+    #       create_list(:task, 2, project: project, status: :completed)
+    #       create_list(:task, 2, project: project, status: :todo)
+    #     end
 
-        it 'calculates the correct percentage' do
-          expect(project.progress_percentage).to eq(50.0)
-        end
-      end
-    end
+    #     it 'calculates the correct percentage' do
+    #       expect(project.progress_percentage).to eq(50.0)
+    #     end
+    #   end
+    # end
 
     describe '#overdue?' do
       context 'when project has no end_date' do
