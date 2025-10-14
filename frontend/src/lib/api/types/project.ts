@@ -59,6 +59,7 @@ export interface CreateProjectRequest {
 	priority?: Project["priority"]
 	start_date?: string
 	end_date?: string
+	category_ids?: number[]
 }
 
 export interface UpdateProjectRequest extends Partial<CreateProjectRequest> {
