@@ -29,7 +29,7 @@ Rails.application.routes.draw do
 
           # Nested resources - tasks within projects
           resources :projects do
-            resources :tasks, controller: 'projects/tasks', except: [ :index ] do
+            resources :tasks, controller: 'projects/tasks' do
               member do
                 patch :complete
                 patch :reopen

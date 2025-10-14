@@ -9,10 +9,7 @@ class Api::V1::Authenticated::Projects::TasksController < Api::V1::Authenticated
     )
 
     if result.success?
-      render_success(
-        serialize_collection(result.data, TaskSerializer),
-        result.message
-      )
+      render_success(result.data, result.message)
     else
       render_error(result.message, result.errors)
     end
@@ -26,10 +23,7 @@ class Api::V1::Authenticated::Projects::TasksController < Api::V1::Authenticated
     )
 
     if result.success?
-      render_success(
-        serialize_resource(result.data, TaskSerializer),
-        result.message
-      )
+      render_success(result.data, result.message)
     else
       render_error(result.message, result.errors, :not_found)
     end
@@ -43,11 +37,7 @@ class Api::V1::Authenticated::Projects::TasksController < Api::V1::Authenticated
     )
 
     if result.success?
-      render_success(
-        serialize_resource(result.data, TaskSerializer),
-        result.message,
-        :created
-      )
+      render_success(result.data, result.message, :created)
     else
       render_error(result.message, result.errors, :unprocessable_content)
     end
@@ -62,10 +52,7 @@ class Api::V1::Authenticated::Projects::TasksController < Api::V1::Authenticated
     )
 
     if result.success?
-      render_success(
-        serialize_resource(result.data, TaskSerializer),
-        result.message
-      )
+      render_success(result.data, result.message)
     else
       render_error(result.message, result.errors, :unprocessable_content)
     end
@@ -93,10 +80,7 @@ class Api::V1::Authenticated::Projects::TasksController < Api::V1::Authenticated
     )
 
     if result.success?
-      render_success(
-        serialize_resource(result.data, TaskSerializer),
-        result.message
-      )
+      render_success(result.data, result.message)
     else
       render_error(result.message, result.errors, :unprocessable_content)
     end
@@ -110,10 +94,7 @@ class Api::V1::Authenticated::Projects::TasksController < Api::V1::Authenticated
     )
 
     if result.success?
-      render_success(
-        serialize_resource(result.data, TaskSerializer),
-        result.message
-      )
+      render_success(result.data, result.message)
     else
       render_error(result.message, result.errors, :unprocessable_content)
     end
@@ -138,14 +119,5 @@ class Api::V1::Authenticated::Projects::TasksController < Api::V1::Authenticated
       :search, :status, :priority, :assignee_id,
       :due_date_from, :due_date_to, :overdue, :sort
     )
-  end
-
-  # Helper methods para serialização
-  def serialize_resource(resource, serializer)
-    serializer.new(resource).serializable_hash[:data][:attributes]
-  end
-
-  def serialize_collection(collection, serializer)
-    serializer.new(collection).serializable_hash[:data].map { |item| item[:attributes] }
   end
 end
