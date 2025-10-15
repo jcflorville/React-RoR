@@ -38,6 +38,7 @@ class Projects::Finder < BaseService
     projects = apply_filters(projects)
     projects = apply_search(projects)
     projects = apply_ordering(projects)
+    projects = apply_pagination(projects)
 
     success(data: projects)
   end
@@ -74,5 +75,12 @@ class Projects::Finder < BaseService
     else
       projects.order(:created_at)
     end
+  end
+
+  def apply_pagination(projects)
+    page = params[:page] || 1
+    per_page = params[:per_page] || 10
+
+    projects.page(page).per(per_page)
   end
 end

@@ -5,13 +5,13 @@ class TaskBlueprint < ApplicationBlueprint
          :completed_at, :created_at, :updated_at
 
   # Computed fields
-  field :overdue do |task|
-    task.overdue?
-  end
+  # field :overdue do |task|
+  #   task.overdue?
+  # end
 
-  field :days_until_due do |task|
-    task.days_until_due
-  end
+  # field :days_until_due do |task|
+  #   task.days_until_due
+  # end
 
   # Conditional associations
   association :project, blueprint: ProjectBlueprint,

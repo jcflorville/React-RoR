@@ -4,15 +4,10 @@
 import type { ProjectFilters } from "../types/project"
 
 export const projectsKeys = {
-	// Base key para todos os projetos
 	all: ["projects"] as const,
-
-	// Lista de projetos
 	lists: () => [...projectsKeys.all, "list"] as const,
-	list: (filters?: ProjectFilters) =>
+	list: (filters?: Omit<ProjectFilters, "page">) =>
 		[...projectsKeys.lists(), filters] as const,
-
-	// Projeto específico
 	details: () => [...projectsKeys.all, "detail"] as const,
 	detail: (id: number) => [...projectsKeys.details(), id] as const,
 }

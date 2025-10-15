@@ -5,9 +5,9 @@ class ProjectBlueprint < ApplicationBlueprint
          :start_date, :end_date, :created_at, :updated_at
 
   # Computed fields
-  field :progress_percentage do |project|
-    project.progress_percentage
-  end
+  # field :progress_percentage do |project|
+  #   project.progress_percentage
+  # end
 
   field :overdue do |project|
     project.overdue?

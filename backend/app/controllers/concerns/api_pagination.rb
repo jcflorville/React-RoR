@@ -6,17 +6,18 @@ module ApiPagination
   def render_pagination(collection, blueprint_class = nil)
     render json: {
       success: true,
-      data: serialize_data(collection, blueprint: blueprint_class),
+      data: serialize_data(collection),
       meta: pagination_meta(collection)
     }
   end
 
   def pagination_meta(collection)
     {
-      current_page: collection.respond_to?(:current_page) ? collection.current_page : 1,
-      per_page: collection.respond_to?(:limit_value) ? collection.limit_value : collection.size,
-      total_pages: collection.respond_to?(:total_pages) ? collection.total_pages : 1,
-      total_count: collection.respond_to?(:total_count) ? collection.total_count : collection.size
+      current_page: collection.current_page,
+      per_page: collection.limit_value,
+      total_pages: collection.total_pages,
+      total_count: collection.total_count,
+      next_page: collection.next_page
     }
   end
 end

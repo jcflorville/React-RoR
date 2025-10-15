@@ -1,12 +1,17 @@
 // Tipos específicos para Projects API
+
+export interface PaginationMeta {
+	current_page: number
+	per_page: number
+	total_pages: number
+	total_count: number
+	next_page: number | null
+}
 export interface ProjectResponse {
+	success: boolean
 	data: Project[]
-	meta?: {
-		total: number
-		page: number
-		per_page: number
-		total_pages: number
-	}
+	meta?: PaginationMeta
+	message?: string
 }
 
 export interface SingleProjectResponse {

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router"
 import { DashboardLayout } from "@components/layouts/DashboardLayout"
 import { useState } from "react"
 import { useProject } from "@/hooks/queries/projects-queries"
@@ -29,6 +29,7 @@ export const Route = createFileRoute("/_auth/projects/$id/edit")({
 function ProjectEditPage() {
 	const { id } = Route.useParams()
 	const navigate = useNavigate()
+	const router = useRouter()
 	const projectId = Number(id)
 
 	// Project states
@@ -187,7 +188,7 @@ function ProjectEditPage() {
 						<Button
 							color='gray'
 							size='sm'
-							onClick={() => navigate({ to: "/projects" })}
+							onClick={() => router.history.back()}
 						>
 							<HiOutlineArrowLeft className='mr-2 h-4 w-4' />
 							Back

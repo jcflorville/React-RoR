@@ -3,7 +3,7 @@ class Api::V1::Authenticated::ProjectsController < Api::V1::Authenticated::BaseC
     result = Projects::Finder.call(user: current_user, params: filter_params)
 
     if result.success?
-      render_success(result.data, result.message)
+      render_pagination(result.data, result.message)
     else
       render_error(result.message, result.errors)
     end
@@ -59,6 +59,6 @@ class Api::V1::Authenticated::ProjectsController < Api::V1::Authenticated::BaseC
   end
 
   def filter_params
-    params.permit(:search, :status, :priority, :start_date, :end_date, :sort)
+    params.permit(:search, :status, :priority, :start_date, :end_date, :sort, :page, :per_page)
   end
 end

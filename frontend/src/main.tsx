@@ -16,6 +16,7 @@ import { routeTree } from "./routeTree.gen"
 const router = createRouter({
 	routeTree,
 	context: undefined!,
+	scrollRestoration: true,
 })
 
 // Register the router instance for type safety

@@ -42,6 +42,9 @@ gem 'devise-jwt'
 # Serialization
 gem 'blueprinter'
 
+# Pagination
+gem 'kaminari'
+
 # Search
 gem 'pg_search'
 

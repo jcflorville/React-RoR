@@ -6,8 +6,15 @@ import { List } from "@/components/projects/List"
 import { ViewModal } from "@/components/projects/modals/ViewModal"
 import { FormModal } from "@/components/projects/modals/FormModal"
 import { type Project } from "@/lib/api/types/project"
-import { useState, useMemo } from "react"
-import { useProjects, useDeleteProject } from "@/hooks/queries/projects-queries"
+import { useState, useMemo, useEffect } from "react"
+import {
+	useInfiniteProjects,
+	useDeleteProject,
+	projectsKeys,
+} from "@/hooks/queries/projects-queries"
+import { useInView } from "react-intersection-observer"
+import { useQueryClient } from "@tanstack/react-query"
+import { projectsApi } from "@/lib/api/services/projects"
 
 export const Route = createFileRoute("/_auth/projects/")({
 	component: ProjectsIndexPage,
@@ -15,19 +22,18 @@ export const Route = createFileRoute("/_auth/projects/")({
 
 function ProjectsIndexPage() {
 	const navigate = useNavigate()
+	const queryClient = useQueryClient()
 	const [searchTerm, setSearchTerm] = useState("")
 	const [statusFilter, setStatusFilter] = useState<string>("")
 	const [priorityFilter, setPriorityFilter] = useState<string>("")
 	const [sortBy, setSortBy] = useState<string>("name")
 
-	// Estados do Modal
 	const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
 		null
 	)
 	const [isViewModalOpen, setIsViewModalOpen] = useState(false)
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
-	// Função para mapear sortBy para os valores que o backend espera
 	const mapSortValue = (
 		sortBy: string
 	):
@@ -46,11 +52,10 @@ function ProjectsIndexPage() {
 			case "created_at":
 				return "created_at_desc"
 			default:
-				return "created_at_desc" // valor padrão
+				return "created_at_desc"
 		}
 	}
 
-	// TanStack Query - Busca dados da API
 	const filters = useMemo(
 		() => ({
 			search: searchTerm || undefined,
@@ -61,13 +66,29 @@ function ProjectsIndexPage() {
 		[searchTerm, statusFilter, priorityFilter, sortBy]
 	)
 
-	const { data: projectsResponse, isLoading, error } = useProjects(filters)
+	const {
+		data,
+		isLoading,
+		error,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useInfiniteProjects(filters, 10)
 
-	// Mutations para operações CRUD
+	const { ref, inView } = useInView({
+		threshold: 0,
+		rootMargin: "100px",
+	})
+
+	useEffect(() => {
+		if (inView && hasNextPage && !isFetchingNextPage) {
+			fetchNextPage()
+		}
+	}, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
+
 	const deleteProjectMutation = useDeleteProject()
 
-	// Projects data from API response
-	const projects = projectsResponse?.data || []
+	const projects = data?.pages.flatMap((page) => page.data) || []
 
 	const handleCreateProject = () => {
 		setIsCreateModalOpen(true)
@@ -78,7 +99,6 @@ function ProjectsIndexPage() {
 	}
 
 	const handleCreateSuccess = (projectId: number) => {
-		// Navigate to edit page after creation
 		navigate({
 			to: "/projects/$id/edit",
 			params: { id: projectId.toString() },
@@ -88,13 +108,13 @@ function ProjectsIndexPage() {
 	const handleDeleteProject = async (project: Project) => {
 		if (
 			window.confirm(
-				`Tem certeza que deseja deletar o projeto "${project.name}"?`
+				`Are you sure you want to delete the project "${project.name}"?`
 			)
 		) {
 			try {
 				await deleteProjectMutation.mutateAsync(project.id)
 			} catch (error) {
-				console.error("Erro ao deletar projeto:", error)
+				console.error("Error deleting project:", error)
 			}
 		}
 	}
@@ -110,7 +130,11 @@ function ProjectsIndexPage() {
 	}
 
 	const handleEditProject = (project: Project) => {
-		// Navigate to edit page
+		queryClient.prefetchQuery({
+			queryKey: projectsKeys.detail(project.id),
+			queryFn: () => projectsApi.getById(project.id),
+		})
+
 		navigate({
 			to: "/projects/$id/edit",
 			params: { id: project.id.toString() },
@@ -118,7 +142,11 @@ function ProjectsIndexPage() {
 	}
 
 	const handleEditFromModal = (projectId: number) => {
-		// Navigate to edit page
+		queryClient.prefetchQuery({
+			queryKey: projectsKeys.detail(projectId),
+			queryFn: () => projectsApi.getById(projectId),
+		})
+
 		navigate({
 			to: "/projects/$id/edit",
 			params: { id: projectId.toString() },
@@ -126,7 +154,6 @@ function ProjectsIndexPage() {
 		handleCloseModal()
 	}
 
-	// Error state
 	if (error) {
 		return (
 			<DashboardLayout>
@@ -155,7 +182,6 @@ function ProjectsIndexPage() {
 		)
 	}
 
-	// Loading state
 	if (isLoading) {
 		return (
 			<DashboardLayout>
@@ -189,14 +215,12 @@ function ProjectsIndexPage() {
 		<>
 			<DashboardLayout>
 				<div className='space-y-6'>
-					{/* Header */}
 					<Header
 						searchTerm={searchTerm}
 						onSearchChange={setSearchTerm}
 						onCreateProject={handleCreateProject}
 					/>
 
-					{/* Filters */}
 					<Filters
 						status={statusFilter}
 						priority={priorityFilter}
@@ -206,7 +230,6 @@ function ProjectsIndexPage() {
 						onSortChange={setSortBy}
 					/>
 
-					{/* Projects List */}
 					<List
 						projects={projects}
 						loading={isLoading}
@@ -214,10 +237,29 @@ function ProjectsIndexPage() {
 						onDeleteProject={handleDeleteProject}
 						onViewProject={handleViewProject}
 					/>
+
+					<div ref={ref} className='flex items-center justify-center py-8'>
+						{isFetchingNextPage && (
+							<div className='flex items-center gap-2'>
+								<div className='animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500' />
+								<span className='text-sm text-gray-600'>
+									Loading more projects...
+								</span>
+							</div>
+						)}
+						{!hasNextPage && projects.length > 0 && (
+							<p className='text-gray-500 text-sm'>No more projects to load</p>
+						)}
+					</div>
+
+					{projects.length === 0 && !isLoading && (
+						<div className='text-center py-12 text-gray-500'>
+							No projects found
+						</div>
+					)}
 				</div>
 			</DashboardLayout>
 
-			{/* Modals */}
 			<ViewModal
 				isOpen={isViewModalOpen}
 				onClose={handleCloseModal}

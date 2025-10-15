@@ -3,6 +3,7 @@ import {
 	useQuery,
 	useMutation,
 	useQueryClient,
+	useInfiniteQuery,
 	type UseQueryOptions,
 } from "@tanstack/react-query"
 import { projectsApi } from "@/lib/api/services/projects"
@@ -12,6 +13,8 @@ import type {
 	ProjectResponse,
 	SingleProjectResponse,
 } from "@/lib/api/types/project"
+
+export { projectsKeys, projectsApi }
 
 // ================================
 // QUERIES (Leitura de dados)
@@ -164,5 +167,25 @@ export const useDeleteProject = () => {
 		onError: (error) => {
 			console.error("❌ Erro ao deletar projeto:", error)
 		},
+	})
+}
+
+export const useInfiniteProjects = (
+	filters?: Omit<ProjectFilters, "page">,
+	perPage: number = 10
+) => {
+	return useInfiniteQuery({
+		queryKey: projectsKeys.list(filters),
+		queryFn: ({ pageParam }) =>
+			projectsApi.getAll({ ...filters, page: pageParam, per_page: perPage }),
+
+		initialPageParam: 1,
+		getNextPageParam: (lastPage) => lastPage.meta?.next_page ?? undefined,
+
+		staleTime: 10 * 60 * 1000,
+		gcTime: 15 * 60 * 1000,
+
+		// Keep data while navigating away
+		placeholderData: (previousData) => previousData,
 	})
 }
