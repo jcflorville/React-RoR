@@ -29,15 +29,19 @@ const useAuthMutation = (endpoint: string) => {
 			console.log(`🔍 ${endpoint} response:`, data)
 			console.log("🔍 Response headers:", headers)
 
+			// Access token vem no header Authorization
 			const authHeader = headers["authorization"] || headers["Authorization"]
 			const token = authHeader ? authHeader.replace("Bearer ", "") : null
+			
+			// Refresh token vem no body da resposta
+			const refreshToken = data.refresh_token
 			const user = data.data
 
-			console.log("🔍 Extracted:", { token, user })
+			console.log("🔍 Extracted:", { token, refreshToken, user })
 
 			if (token && user) {
-				login(user, token)
-				console.log("✅ Auth set via Zustand store")
+				login(user, token, refreshToken)
+				console.log("✅ Auth set via Zustand store with refresh token")
 			} else {
 				console.error("❌ Missing token or user in response")
 			}

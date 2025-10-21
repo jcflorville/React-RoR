@@ -8,6 +8,16 @@ export interface User {
 
 export interface AuthResponse {
 	data: User
+	token?: string
+	refresh_token?: string
+	message?: string
+	success: boolean
+}
+
+export interface RefreshTokenResponse {
+	data: User
+	token: string
+	refresh_token: string
 	message?: string
 	success: boolean
 }
@@ -27,6 +37,7 @@ export interface RegisterCredentials {
 export interface AuthState {
 	user: User | null
 	token: string | null
+	refreshToken: string | null
 	isAuthenticated: boolean
 	isLoading: boolean
 	isHydrated: boolean

@@ -12,6 +12,12 @@ class Api::V1::Auth::SessionsController < Devise::SessionsController
     end
   end
 
+  def destroy
+    # Revoke refresh token on logout
+    current_user&.revoke_refresh_token!
+    super
+  end
+
   private
 
   def respond_to_on_destroy

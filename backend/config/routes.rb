@@ -16,6 +16,9 @@ Rails.application.routes.draw do
             delete 'sign_out', to: 'sessions#destroy'
             post 'sign_up', to: 'registrations#create'
           end
+          
+          # Refresh token endpoint
+          post 'refresh', to: 'refresh#create'
         end
 
         # Endpoints públicos

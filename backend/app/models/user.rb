@@ -11,6 +11,23 @@ class User < ApplicationRecord
 
   before_save :downcase_email
 
+  # Generate new refresh token
+  def generate_refresh_token!
+    self.refresh_jti = SecureRandom.uuid
+    self.refresh_token_expires_at = 30.days.from_now
+    save!
+  end
+
+  # Check if refresh token is valid
+  def refresh_token_valid?
+    refresh_jti.present? && refresh_token_expires_at.present? && refresh_token_expires_at > Time.current
+  end
+
+  # Revoke refresh token
+  def revoke_refresh_token!
+    update!(refresh_jti: nil, refresh_token_expires_at: nil)
+  end
+
   def full_name
     name
   end
