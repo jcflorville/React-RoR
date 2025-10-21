@@ -14,7 +14,7 @@ module Api
           if result.success?
             # Set access token in Authorization header (padrão Devise JWT)
             response.headers['Authorization'] = "Bearer #{result.data[:token]}"
-            
+
             render json: {
               success: true,
               data: serialize_data(result.data[:user], blueprint: UserBlueprint),

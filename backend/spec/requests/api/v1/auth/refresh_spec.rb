@@ -12,10 +12,10 @@ RSpec.describe 'Api::V1::Auth::Refresh', type: :request do
       end
 
       it 'returns new access and refresh tokens' do
-        payload = { 
-          refresh_jti: user.refresh_jti, 
+        payload = {
+          refresh_jti: user.refresh_jti,
           sub: user.id,
-          exp: user.refresh_token_expires_at.to_i 
+          exp: user.refresh_token_expires_at.to_i
         }
         refresh_token = JWT.encode(payload, ENV['DEVISE_JWT_SECRET_KEY'], 'HS256')
 
@@ -31,11 +31,11 @@ RSpec.describe 'Api::V1::Auth::Refresh', type: :request do
 
       it 'updates user refresh_jti' do
         old_refresh_jti = user.refresh_jti
-        
-        payload = { 
-          refresh_jti: old_refresh_jti, 
+
+        payload = {
+          refresh_jti: old_refresh_jti,
           sub: user.id,
-          exp: user.refresh_token_expires_at.to_i 
+          exp: user.refresh_token_expires_at.to_i
         }
         refresh_token = JWT.encode(payload, ENV['DEVISE_JWT_SECRET_KEY'], 'HS256')
 
@@ -72,10 +72,10 @@ RSpec.describe 'Api::V1::Auth::Refresh', type: :request do
       end
 
       it 'returns error' do
-        payload = { 
-          refresh_jti: user.refresh_jti, 
+        payload = {
+          refresh_jti: user.refresh_jti,
           sub: user.id,
-          exp: 1.day.from_now.to_i 
+          exp: 1.day.from_now.to_i
         }
         refresh_token = JWT.encode(payload, ENV['DEVISE_JWT_SECRET_KEY'], 'HS256')
 
@@ -89,10 +89,10 @@ RSpec.describe 'Api::V1::Auth::Refresh', type: :request do
 
     context 'when user does not exist' do
       it 'returns error' do
-        payload = { 
-          refresh_jti: SecureRandom.uuid, 
+        payload = {
+          refresh_jti: SecureRandom.uuid,
           sub: 99999,
-          exp: 1.day.from_now.to_i 
+          exp: 1.day.from_now.to_i
         }
         refresh_token = JWT.encode(payload, ENV['DEVISE_JWT_SECRET_KEY'], 'HS256')
 

@@ -52,7 +52,7 @@ module ApiResponse
       iat: Time.current.to_i,
       type: 'refresh'
     }
-    
+
     JWT.encode(payload, ENV['DEVISE_JWT_SECRET_KEY'], 'HS256')
   end
 

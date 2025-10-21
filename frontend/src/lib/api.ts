@@ -110,9 +110,10 @@ api.interceptors.response.use(
 			console.log("✅ Refresh headers:", response.headers)
 
 			// Extract token from header (priority) or body
-			const authHeader = response.headers["authorization"] || response.headers["Authorization"]
-			const newToken = authHeader 
-				? authHeader.replace("Bearer ", "") 
+			const authHeader =
+				response.headers["authorization"] || response.headers["Authorization"]
+			const newToken = authHeader
+				? authHeader.replace("Bearer ", "")
 				: response.data.token
 			const newRefreshToken = response.data.refresh_token
 

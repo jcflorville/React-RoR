@@ -14,9 +14,7 @@ export const authService = {
 		return response.data
 	},
 
-	register: async (
-		credentials: RegisterCredentials
-	): Promise<AuthResponse> => {
+	register: async (credentials: RegisterCredentials): Promise<AuthResponse> => {
 		const response = await api.post<AuthResponse>("/auth/sign_up", {
 			user: credentials,
 		})
@@ -27,9 +25,7 @@ export const authService = {
 		await api.delete("/auth/sign_out")
 	},
 
-	refreshToken: async (
-		refreshToken: string
-	): Promise<RefreshTokenResponse> => {
+	refreshToken: async (refreshToken: string): Promise<RefreshTokenResponse> => {
 		const response = await api.post<RefreshTokenResponse>("/auth/refresh", {
 			refresh_token: refreshToken,
 		})

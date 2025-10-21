@@ -11,22 +11,22 @@ module Auth
     end
 
     def call
-      return failure(message: "Refresh token is required", errors: { refresh_token: ["can't be blank"] }) if @refresh_token.blank?
+      return failure(message: 'Refresh token is required', errors: { refresh_token: [ "can't be blank" ] }) if @refresh_token.blank?
 
       decoded_token = decode_refresh_token
-      return failure(message: "Invalid refresh token", errors: { refresh_token: ["is invalid or expired"] }) unless decoded_token
+      return failure(message: 'Invalid refresh token', errors: { refresh_token: [ 'is invalid or expired' ] }) unless decoded_token
 
       user = find_user(decoded_token)
-      return failure(message: "User not found or refresh token invalid", errors: { refresh_token: ["is invalid"] }) unless user
+      return failure(message: 'User not found or refresh token invalid', errors: { refresh_token: [ 'is invalid' ] }) unless user
 
       # Validate refresh token
       unless user.refresh_token_valid?
-        return failure(message: "Refresh token expired", errors: { refresh_token: ["has expired"] })
+        return failure(message: 'Refresh token expired', errors: { refresh_token: [ 'has expired' ] })
       end
 
       # Generate new access token
       token = generate_access_token(user)
-      
+
       # Generate new refresh token
       user.generate_refresh_token!
       new_refresh_token = generate_refresh_token(user)
@@ -37,10 +37,10 @@ module Auth
           token: token,
           refresh_token: new_refresh_token
         },
-        message: "Token refreshed successfully"
+        message: 'Token refreshed successfully'
       )
     rescue JWT::DecodeError, JWT::ExpiredSignature => e
-      failure(message: "Invalid or expired refresh token", errors: { refresh_token: [e.message] })
+      failure(message: 'Invalid or expired refresh token', errors: { refresh_token: [ e.message ] })
     end
 
     private
@@ -70,7 +70,7 @@ module Auth
         exp: 15.minutes.from_now.to_i,
         iat: Time.current.to_i
       }
-      
+
       JWT.encode(payload, ENV['DEVISE_JWT_SECRET_KEY'], 'HS256')
     end
 
@@ -82,7 +82,7 @@ module Auth
         iat: Time.current.to_i,
         type: 'refresh'
       }
-      
+
       JWT.encode(payload, ENV['DEVISE_JWT_SECRET_KEY'], 'HS256')
     end
   end

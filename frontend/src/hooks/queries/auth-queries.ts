@@ -32,7 +32,7 @@ const useAuthMutation = (endpoint: string) => {
 			// Access token vem no header Authorization
 			const authHeader = headers["authorization"] || headers["Authorization"]
 			const token = authHeader ? authHeader.replace("Bearer ", "") : null
-			
+
 			// Refresh token vem no body da resposta
 			const refreshToken = data.refresh_token
 			const user = data.data
