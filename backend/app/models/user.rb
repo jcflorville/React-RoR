@@ -7,6 +7,13 @@ class User < ApplicationRecord
   has_many :tasks, dependent: :nullify
   has_many :comments, dependent: :destroy
 
+  # Notifications
+  has_many :notifications, dependent: :destroy
+  has_many :triggered_notifications, class_name: 'Notification', foreign_key: 'actor_id', dependent: :destroy
+
+  # Webhooks
+  has_many :webhook_subscriptions, dependent: :destroy
+
   validates :name, presence: true, length: { minimum: 2, maximum: 100 }
 
   before_save :downcase_email

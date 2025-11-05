@@ -54,6 +54,29 @@ Rails.application.routes.draw do
 
           resources :categories
           resources :comments, except: [ :show ]
+
+          # Notifications
+          resources :notifications, only: [ :index, :show, :destroy ] do
+            collection do
+              get :unread_count
+              post :mark_all_as_read
+            end
+            member do
+              patch :mark_as_read
+              patch :mark_as_unread
+            end
+          end
+
+          # Notification Stream (SSE)
+          get 'notification_stream', to: 'notification_stream#index'
+
+          # Webhook Subscriptions
+          resources :webhook_subscriptions do
+            member do
+              post :enable
+              post :disable
+            end
+          end
         end
       end
     end

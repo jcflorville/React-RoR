@@ -16,6 +16,9 @@ class Api::V1::Authenticated::CommentsController < Api::V1::Authenticated::BaseC
     result = Comments::Creator.call(user: current_user, params: comment_params)
 
     if result.success?
+      # Trigger notifications for mentions and task owner
+      Notifications::CommentNotifier.call(comment: result.data, actor: current_user)
+
       render_success(
         serialize_data(result.data),
         result.message,

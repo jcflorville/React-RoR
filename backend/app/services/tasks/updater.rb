@@ -36,8 +36,15 @@ class Tasks::Updater < BaseService
       return assignee_result if assignee_result&.failure?
     end
 
+    # Capture changes before saving
+    changes = @task.changes
+
     if @task.update(task_params)
-      success(data: @task, message: 'Task updated successfully')
+      success(
+        data: @task,
+        message: 'Task updated successfully',
+        metadata: { changes: changes }
+      )
     else
       failure(errors: format_errors(@task), message: 'Failed to update task')
     end

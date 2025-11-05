@@ -15,8 +15,8 @@ module ApiSerialization
     # Parse includes from query params
     requested_includes = parse_include_params(params[:include])
 
-    # Render with Blueprinter - Rails automatically stringifies keys in render json:
-    blueprint_class.render_as_hash(data, include: requested_includes)
+    # Render with Blueprinter - pass includes in options hash
+    blueprint_class.render_as_hash(data, { include: requested_includes })
   rescue NameError => e
     # Fallback if blueprint doesn't exist
     Rails.logger.warn(

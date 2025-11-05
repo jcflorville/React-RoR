@@ -48,6 +48,9 @@ gem 'kaminari'
 # Search
 gem 'pg_search'
 
+# HTTP client for webhooks
+gem 'http', '~> 5.0'
+
 group :development do
   gem 'bullet'
 end
@@ -72,4 +75,5 @@ end
 
 group :test do
   gem 'shoulda-matchers', '~> 6.0'
+  gem 'webmock'
 end

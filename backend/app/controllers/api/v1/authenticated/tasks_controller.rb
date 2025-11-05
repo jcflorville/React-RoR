@@ -49,6 +49,15 @@ class Api::V1::Authenticated::TasksController < Api::V1::Authenticated::BaseCont
     )
 
     if result.success?
+      # Trigger notifications for task status changes
+      if result.metadata && result.metadata[:changes]
+        Notifications::TaskNotifier.call(
+          task: result.data,
+          actor: current_user,
+          changes: result.metadata[:changes]
+        )
+      end
+
       render_success(
         serialize_data(result.data),
         result.message
