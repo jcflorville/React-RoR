@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       skip: [ :sessions, :registrations ]
     namespace :api do
       namespace :v1 do
+         resources :contacts, only: [ :index, :create ]
         namespace :auth do
           # Definir rotas customizadas apenas para API
           devise_scope :user do

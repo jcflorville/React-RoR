@@ -1,4 +1,3 @@
-// API Service para Projects - seguindo padrão de repository
 import { api } from "@/lib/api"
 import type {
 	ProjectResponse,

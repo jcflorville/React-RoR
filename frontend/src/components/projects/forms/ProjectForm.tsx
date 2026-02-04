@@ -26,7 +26,7 @@ export function ProjectForm({
 
 	// Selected categories state (for multiselect)
 	const [selectedCategories, setSelectedCategories] = useState<number[]>(
-		initialData?.categories?.map((c) => c.id) || []
+		initialData?.categories?.map((c) => c.id) || [],
 	)
 
 	const {
@@ -59,7 +59,7 @@ export function ProjectForm({
 		setSelectedCategories((prev) =>
 			prev.includes(categoryId)
 				? prev.filter((id) => id !== categoryId)
-				: [...prev, categoryId]
+				: [...prev, categoryId],
 		)
 	}
 

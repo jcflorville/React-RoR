@@ -35,7 +35,7 @@ export const projectSchema = z
 		{
 			message: "End date must be after start date",
 			path: ["end_date"],
-		}
+		},
 	)
 
 // Tipos TypeScript automáticos

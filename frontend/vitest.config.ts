@@ -1,23 +1,42 @@
-import tailwindcss from "@tailwindcss/vite"
-import { tanstackRouter } from "@tanstack/router-plugin/vite"
-import { defineConfig } from "vite"
-import tsConfigPaths from "vite-tsconfig-paths"
+import { defineConfig } from "vitest/config"
 import react from "@vitejs/plugin-react-swc"
-import flowbiteReact from "flowbite-react/plugin/vite"
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite"
 import path from "path"
 
-// https://vite.dev/config/
 export default defineConfig({
 	plugins: [
-		tailwindcss(),
-		tanstackRouter({
-			target: "react",
-			autoCodeSplitting: true,
+		TanStackRouterVite({
+			// Configure for test environment
+			routesDirectory: "./src/routes",
+			generatedRouteTree: "./src/routeTree.gen.ts",
+			disableLogging: true,
 		}),
-		tsConfigPaths(),
 		react(),
-		flowbiteReact(),
 	],
+	test: {
+		globals: true,
+		environment: "jsdom",
+		setupFiles: ["./src/test/setup.ts"],
+		include: ["**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+		coverage: {
+			provider: "v8",
+			reporter: ["text", "json", "html"],
+			exclude: [
+				"node_modules/",
+				"src/test/",
+				"**/*.d.ts",
+				"**/*.config.*",
+				"**/mockData",
+				"**/types",
+				"src/routeTree.gen.ts",
+			],
+		},
+		poolOptions: {
+			threads: {
+				singleThread: true, // Important for TanStack Router state management
+			},
+		},
+	},
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "./src"),
@@ -33,16 +52,6 @@ export default defineConfig({
 			"@utils": path.resolve(__dirname, "./src/utils"),
 			"@assets": path.resolve(__dirname, "./src/assets"),
 			"@test": path.resolve(__dirname, "./src/test"),
-		},
-	},
-	server: {
-		host: "0.0.0.0", // Allow external connections
-		port: 5173,
-		watch: {
-			usePolling: true, // Enable polling for file changes in Docker
-		},
-		hmr: {
-			port: 5173, // Hot Module Replacement port
 		},
 	},
 })
