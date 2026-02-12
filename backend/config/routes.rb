@@ -55,6 +55,7 @@ Rails.application.routes.draw do
 
           resources :categories
           resources :comments, except: [ :show ]
+          resources :drawings
 
           # Notifications
           resources :notifications, only: [ :index, :show, :destroy ] do

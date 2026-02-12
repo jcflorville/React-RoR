@@ -16,7 +16,10 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthProjectsRouteImport } from './routes/_auth.projects'
 import { Route as AuthDashboardRouteImport } from './routes/_auth.dashboard'
+import { Route as AuthDadaRouteImport } from './routes/_auth.dada'
 import { Route as AuthProjectsIndexRouteImport } from './routes/_auth.projects.index'
+import { Route as AuthDadaIndexRouteImport } from './routes/_auth.dada.index'
+import { Route as AuthDadaIdRouteImport } from './routes/_auth.dada.$id'
 import { Route as AuthProjectsIdEditRouteImport } from './routes/_auth.projects.$id.edit'
 
 const SignUpRoute = SignUpRouteImport.update({
@@ -53,10 +56,25 @@ const AuthDashboardRoute = AuthDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthDadaRoute = AuthDadaRouteImport.update({
+  id: '/dada',
+  path: '/dada',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthProjectsIndexRoute = AuthProjectsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthProjectsRoute,
+} as any)
+const AuthDadaIndexRoute = AuthDadaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthDadaRoute,
+} as any)
+const AuthDadaIdRoute = AuthDadaIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthDadaRoute,
 } as any)
 const AuthProjectsIdEditRoute = AuthProjectsIdEditRouteImport.update({
   id: '/$id/edit',
@@ -69,8 +87,11 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/dada': typeof AuthDadaRouteWithChildren
   '/dashboard': typeof AuthDashboardRoute
   '/projects': typeof AuthProjectsRouteWithChildren
+  '/dada/$id': typeof AuthDadaIdRoute
+  '/dada/': typeof AuthDadaIndexRoute
   '/projects/': typeof AuthProjectsIndexRoute
   '/projects/$id/edit': typeof AuthProjectsIdEditRoute
 }
@@ -80,6 +101,8 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/dashboard': typeof AuthDashboardRoute
+  '/dada/$id': typeof AuthDadaIdRoute
+  '/dada': typeof AuthDadaIndexRoute
   '/projects': typeof AuthProjectsIndexRoute
   '/projects/$id/edit': typeof AuthProjectsIdEditRoute
 }
@@ -90,8 +113,11 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
+  '/_auth/dada': typeof AuthDadaRouteWithChildren
   '/_auth/dashboard': typeof AuthDashboardRoute
   '/_auth/projects': typeof AuthProjectsRouteWithChildren
+  '/_auth/dada/$id': typeof AuthDadaIdRoute
+  '/_auth/dada/': typeof AuthDadaIndexRoute
   '/_auth/projects/': typeof AuthProjectsIndexRoute
   '/_auth/projects/$id/edit': typeof AuthProjectsIdEditRoute
 }
@@ -102,8 +128,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/sign-in'
     | '/sign-up'
+    | '/dada'
     | '/dashboard'
     | '/projects'
+    | '/dada/$id'
+    | '/dada/'
     | '/projects/'
     | '/projects/$id/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -113,6 +142,8 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/dashboard'
+    | '/dada/$id'
+    | '/dada'
     | '/projects'
     | '/projects/$id/edit'
   id:
@@ -122,8 +153,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/sign-in'
     | '/sign-up'
+    | '/_auth/dada'
     | '/_auth/dashboard'
     | '/_auth/projects'
+    | '/_auth/dada/$id'
+    | '/_auth/dada/'
     | '/_auth/projects/'
     | '/_auth/projects/$id/edit'
   fileRoutesById: FileRoutesById
@@ -187,12 +221,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashboardRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/dada': {
+      id: '/_auth/dada'
+      path: '/dada'
+      fullPath: '/dada'
+      preLoaderRoute: typeof AuthDadaRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/projects/': {
       id: '/_auth/projects/'
       path: '/'
       fullPath: '/projects/'
       preLoaderRoute: typeof AuthProjectsIndexRouteImport
       parentRoute: typeof AuthProjectsRoute
+    }
+    '/_auth/dada/': {
+      id: '/_auth/dada/'
+      path: '/'
+      fullPath: '/dada/'
+      preLoaderRoute: typeof AuthDadaIndexRouteImport
+      parentRoute: typeof AuthDadaRoute
+    }
+    '/_auth/dada/$id': {
+      id: '/_auth/dada/$id'
+      path: '/$id'
+      fullPath: '/dada/$id'
+      preLoaderRoute: typeof AuthDadaIdRouteImport
+      parentRoute: typeof AuthDadaRoute
     }
     '/_auth/projects/$id/edit': {
       id: '/_auth/projects/$id/edit'
@@ -203,6 +258,20 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthDadaRouteChildren {
+  AuthDadaIdRoute: typeof AuthDadaIdRoute
+  AuthDadaIndexRoute: typeof AuthDadaIndexRoute
+}
+
+const AuthDadaRouteChildren: AuthDadaRouteChildren = {
+  AuthDadaIdRoute: AuthDadaIdRoute,
+  AuthDadaIndexRoute: AuthDadaIndexRoute,
+}
+
+const AuthDadaRouteWithChildren = AuthDadaRoute._addFileChildren(
+  AuthDadaRouteChildren,
+)
 
 interface AuthProjectsRouteChildren {
   AuthProjectsIndexRoute: typeof AuthProjectsIndexRoute
@@ -219,11 +288,13 @@ const AuthProjectsRouteWithChildren = AuthProjectsRoute._addFileChildren(
 )
 
 interface AuthRouteChildren {
+  AuthDadaRoute: typeof AuthDadaRouteWithChildren
   AuthDashboardRoute: typeof AuthDashboardRoute
   AuthProjectsRoute: typeof AuthProjectsRouteWithChildren
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthDadaRoute: AuthDadaRouteWithChildren,
   AuthDashboardRoute: AuthDashboardRoute,
   AuthProjectsRoute: AuthProjectsRouteWithChildren,
 }

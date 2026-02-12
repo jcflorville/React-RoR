@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_many :projects, dependent: :destroy
   has_many :tasks, dependent: :nullify
   has_many :comments, dependent: :destroy
+  has_many :drawings, dependent: :destroy
 
   # Notifications
   has_many :notifications, dependent: :destroy

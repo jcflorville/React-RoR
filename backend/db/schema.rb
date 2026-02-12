@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_27_172602) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_05_155140) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -45,6 +45,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_27_172602) do
     t.string "email", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "drawings", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title", default: "Untitled", null: false
+    t.jsonb "canvas_data", default: {}, null: false
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_drawings_on_created_at"
+    t.index ["user_id"], name: "index_drawings_on_user_id"
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -130,6 +141,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_27_172602) do
 
   add_foreign_key "comments", "tasks"
   add_foreign_key "comments", "users"
+  add_foreign_key "drawings", "users"
   add_foreign_key "notifications", "users"
   add_foreign_key "notifications", "users", column: "actor_id"
   add_foreign_key "projects", "users"
