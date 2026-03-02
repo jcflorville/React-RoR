@@ -50,7 +50,7 @@ export const useDrawing = (
 		queryKey: drawingsKeys.detail(id),
 		queryFn: () => drawingsApi.getById(id),
 		enabled: !!id,
-		staleTime: 2 * 60 * 1000, // 2 minutes (shorter for active editing)
+		staleTime: 0, // Always refetch on mount so navigation back shows latest data
 		...options,
 	})
 }
@@ -117,22 +117,12 @@ export const useUpdateDrawing = (
 				queryClient.setQueryData(drawingsKeys.detail(id), context.previous)
 			}
 		},
-		onSuccess: (data, variables) => {
-			// Only update lock_version and other metadata from server
-			// Keep current canvas_data to avoid reload during editing
-			const currentData = queryClient.getQueryData<Drawing>(
-				drawingsKeys.detail(id),
-			)
-			if (currentData && variables.canvas_data) {
-				// If we just saved canvas_data, use it (it's already in the canvas)
-				queryClient.setQueryData<Drawing>(drawingsKeys.detail(id), {
-					...data,
-					canvas_data: currentData.canvas_data,
-				})
-			} else {
-				// For other updates (like title), use server data
-				queryClient.setQueryData(drawingsKeys.detail(id), data)
-			}
+		onSuccess: (data) => {
+			// Store the full server response — canvas_data is now authoritative.
+			// FabricCanvas uses useEffect([]) so it never re-reads props after mount,
+			// meaning updating the cache here causes zero canvas re-renders during
+			// active editing. This also ensures navigation-back shows the latest state.
+			queryClient.setQueryData(drawingsKeys.detail(id), data)
 			queryClient.invalidateQueries({ queryKey: drawingsKeys.lists() })
 		},
 		...options,

@@ -27,7 +27,7 @@ function DadaIndex() {
 	if (isLoading) {
 		return (
 			<div className='flex items-center justify-center min-h-[400px]'>
-				<FiLoader className='h-8 w-8 animate-spin text-muted-foreground' />
+				<FiLoader className='h-8 w-8 animate-spin text-gray-400 dark:text-gray-500' />
 			</div>
 		)
 	}
@@ -36,8 +36,10 @@ function DadaIndex() {
 		<div className='space-y-6'>
 			<div className='flex items-center justify-between'>
 				<div>
-					<h2 className='text-2xl font-bold'>My Drawings</h2>
-					<p className='text-muted-foreground'>
+					<h2 className='text-2xl font-bold text-gray-900 dark:text-white'>
+						My Drawings
+					</h2>
+					<p className='text-gray-500 dark:text-gray-400'>
 						Create and manage your visual conversations
 					</p>
 				</div>
@@ -61,18 +63,22 @@ function DadaIndex() {
 							key={drawing.id}
 							to='/dada/$id'
 							params={{ id: drawing.id.toString() }}
-							className='block p-6 border rounded-lg hover:border-primary transition-colors'
+							className='block p-6 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:border-blue-500 dark:hover:border-blue-400 transition-colors'
 						>
-							<h3 className='font-semibold mb-2'>{drawing.title}</h3>
-							<p className='text-sm text-muted-foreground'>
+							<h3 className='font-semibold mb-2 text-gray-900 dark:text-white'>
+								{drawing.title}
+							</h3>
+							<p className='text-sm text-gray-500 dark:text-gray-400'>
 								Updated {new Date(drawing.updated_at).toLocaleDateString()}
 							</p>
 						</Link>
 					))}
 				</div>
 			) : (
-				<div className='text-center py-12 border border-dashed rounded-lg'>
-					<p className='text-muted-foreground mb-4'>No drawings yet</p>
+				<div className='text-center py-12 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg'>
+					<p className='text-gray-500 dark:text-gray-400 mb-4'>
+						No drawings yet
+					</p>
 					<Button
 						onClick={handleCreateDrawing}
 						disabled={createDrawing.isPending}
